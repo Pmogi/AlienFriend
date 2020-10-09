@@ -11,11 +11,6 @@ end
 -- Add new entity to entity list
 function World.addEntity(entity)
     assert(entity, "World::addEntity : No entity passed in.")
-    
-    -- I really hate that I have to do this, if I planned the tile system better I wouldn't have to do this
-    if (entity.id == "Tank") then
-        entity:setTile(Tile) -- use tank's method for setting random tile
-    end
 
     table.insert(entityList, entity)
 end
