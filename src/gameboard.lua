@@ -1,8 +1,6 @@
 local Object = require("lib/classic")
 local World = require("src/world")
 local gameboard = Object:extend()
-
-
 local physics
 local objects = {} -- physics to hold all our physical objects
 --local objectLog = {}
@@ -12,7 +10,6 @@ local _meter                = 32
 local _gravity_constant     = 9.81
 local _gravity_factor_x     = 0
 local _gravity_factor_y     = 1
-
 
 function gameboard:new()
 
