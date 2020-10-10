@@ -2,91 +2,138 @@ local Object = require("lib/classic")
 local World = require("src/world")
 local gameboard = Object:extend()
 
-local objects = {} -- physics to hold all our physical objects
+
 local physics
+local objects = {} -- physics to hold all our physical objects
+--local objectLog = {}
+local drawOrder = {}
 
 local _meter                = 32
 local _gravity_constant     = 9.81
 local _gravity_factor_x     = 0
 local _gravity_factor_y     = 1
 
-function gameboard.new()
-    --self.id = "gameboard"
 
+function gameboard:new()
+
+    self.id = "gameboard"
+    self:setupEnumerations()
+    
+    love.graphics.setBackgroundColor({0.41, 0.53, 0.97})
+    love.window.setMode(650, 650) -- set the window dimensions to 650 by 650
+    
     love.physics.setMeter(_meter)
     physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
                                   , _meter * _gravity_constant * _gravity_factor_y
                                   , true)
     
-    print("physics.type = " .. type(physics))
-    print("objects.type = " .. type(objects))
-    -- let's create the ground
-    objects.ground = {}
-    -- remember, the shape (the rectangle we create next) anchors to the
-    -- body from its center, so we have to move it to (650/2, 650-50/2)
-    objects.ground.body = love.physics.newBody(physics, 650/2, 650-50/2)
-    -- make a rectangle with a width of 650 and a height of 50
-    objects.ground.shape = love.physics.newRectangleShape(650, 50)
-    -- attach shape to body
-    objects.ground.fixture = love.physics.newFixture(objects.ground.body,
-                                                     objects.ground.shape)
-   
-    -- let's create a ball
-    objects.ball = {}
-    -- place the body in the center of the world and make it dynamic, so
-    -- it can move around
-    objects.ball.body = love.physics.newBody(physics, 650/2, 650/2, "dynamic")
-    -- the ball's shape has a radius of 20
-    objects.ball.shape = love.physics.newCircleShape(20)
-    -- Attach fixture to body and give it a density of 1.
-    objects.ball.fixture = love.physics.newFixture(objects.ball.body,
-                                                   objects.ball.shape, 1)
-    objects.ball.fixture:setRestitution(0.9) -- let the ball bounce
-
-   
-    -- let's create a couple blocks to play around with
-    objects.block1 = {}
-    objects.block1.body = love.physics.newBody(physics, 200, 550, "dynamic")
-    objects.block1.shape = love.physics.newRectangleShape(0, 0, 50, 100)
-    -- A higher density gives it more mass.
-    objects.block1.fixture = love.physics.newFixture(objects.block1.body,
-                                                     objects.block1.shape, 5)
-   
-    objects.block2 = {}
-    objects.block2.body = love.physics.newBody(physics, 200, 400, "dynamic")
-    objects.block2.shape = love.physics.newRectangleShape(0, 0, 100, 50)
-    objects.block2.fixture = love.physics.newFixture(objects.block2.body,
-                                                     objects.block2.shape, 2)
-   
-    -- initial graphics setup
-    -- set the background color to a nice blue
-    love.graphics.setBackgroundColor(0.41, 0.53, 0.97)
-    love.window.setMode(650, 650) -- set the window dimensions to 650 by 650
-    
+    self:addShape(  "test", gb_behaviors[behavior_static], gb_shapes["shape_rectangle"],
+                    gb_colors["color_maroon"], 300, 300,
+                    500, 200, -1,
+                    -1, 1, 0,
+                    0.5, true, 1,
+                    1 , false, 0,
+                    false, 0, 100,
+                    physics )
 end
 
 function gameboard.draw()
-      -- set the drawing color to green for the ground
-  love.graphics.setColor(0.28, 0.63, 0.05)
-  -- draw a "filled in" polygon using the ground's coordinates
-  love.graphics.polygon("fill", objects.ground.body:getWorldPoints(
-                           objects.ground.shape:getPoints()))
-  -- set the drawing color to red for the ball
-  love.graphics.setColor(0.76, 0.18, 0.05)
-  love.graphics.circle("fill", objects.ball.body:getX(),
-                       objects.ball.body:getY(), objects.ball.shape:getRadius())
- 
-  -- set the drawing color to grey for the blocks
-  love.graphics.setColor(0.20, 0.20, 0.20)
-  love.graphics.polygon("fill", objects.block1.body:getWorldPoints(
-                           objects.block1.shape:getPoints()))
-  love.graphics.polygon("fill", objects.block2.body:getWorldPoints(
-                           objects.block2.shape:getPoints()))
+    for key,value in pairs(objects) do
+        love.graphics.setColor(objects[key].colors)
+        if objects[key].shape:getType() == "polygon" then
+            love.graphics.polygon("fill", objects[key].body:getWorldPoints(objects[key].shape:getPoints()))
+        elseif objects[key].shape:getType() == "circle" then
+            love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
+        end
+    end
 end
-
 
 function gameboard.update(dt)
     physics:update(dt)
+end
+
+function gameboard:addShape(
+                            myName,         behavior,           shape,               
+                            color,          x,                  y,          
+                            width,          height,             radius,
+                            sides,          count,              rotation,
+                            restitution,    rounded,            rounding_factor,
+                            density,        magnetic,           magnetic_strength,         
+                            stroke,         stroke_width,       depth,
+                            myPhysics )
+    local _1flag = false -- helps mediate the keys of objects that are split into multiple parts
+    if (shape == gb_shapes["shape_rectangle"]) then
+        if rounded then
+            objects[myName .. "_1"] = {}
+            objects[myName .. "_1"].body = love.physics.newBody(myPhysics, x, y, behavior)
+            objects[myName .. "_1"].shape = love.physics.newRectangleShape(math.abs(width-height), height)
+            objects[myName .. "_1"].fixture = love.physics.newFixture(objects[myName .. "_1"].body, objects[myName .. "_1"].shape, density)
+            self:addShape(  (myName .. "_2"), behavior, gb_shapes["shape_circle"],
+                            color, (x-math.abs(width-height)/2), y,
+                            width, height, (height/2),
+                            sides, count, rotation,
+                            restitution, rounded, rounding_factor,
+                            density, magnetic, magnetic_strength,
+                            stroke, stroke_width, depth,
+                            myPhysics )
+            self:addShape(  (myName .. "_3"), behavior, gb_shapes["shape_circle"],
+                            color, (x+math.abs(width-height)/2), y,
+                            width, height, (height/2),
+                            sides, count, rotation,
+                            restitution, rounded, rounding_factor,
+                            density, magnetic, magnetic_strength,
+                            stroke, stroke_width, depth,
+                            myPhysics )
+            myName = (myName .. "_1")
+        else
+            objects[myName] = {}
+            objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
+            objects[myName].shape = love.physics.newRectangleShape(width, height)
+            objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
+        end
+    elseif (shape == gb_shapes["shape_circle"]) then
+        objects[myName] = {}
+        objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
+        objects[myName].shape = love.physics.newCircleShape(radius)
+        objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
+    end
+    objects[myName].colors  = color
+    objects[myName].depth   = depth
+    
+    -- sort the table to update the draw order
+    table.sort(objects, function(a,b) return a[depth] < b[depth] end)
+
+    --objectLog[myName] = {_myName = myName, _behavior = behavior, _shape = shape, _color = color, _x = x, _y = y, _width = width, _height = height, _radius = radius, _sides = sides, _count = count, _rotation = rotation, _restitution = restitution, _rounded = rounded, _rounding_factor = rounding_factor, _density = density, _magnetic = magnetic, _magnetic_strengh = magnetic_strength, _stroke = stroke, _stroke_width = stroke_width, _depth = depth, _myPhysics = myPhysics}
+end
+
+function gameboard.setupEnumerations()
+
+    gb_shapes = 
+    {
+         shape_circle       = 1
+        ,shape_cup          = 2
+        ,shape_concave      = 3
+        ,shape_convex       = 4
+        ,shape_edge         = 5
+        ,shape_polygon      = 6
+        ,shape_rectangle    = 7
+        ,shape_regular      = 8
+        ,shape_polygon      = 9
+        ,shape_spokes       = 10
+    }
+
+    gb_behaviors = 
+    {
+         behavior_static      = "static"
+        ,behavior_kinematic   = "kinematic"
+        ,behavior_dynamic     = "dynamic"
+    }
+
+    gb_colors = 
+    {
+        color_maroon = {0.5, 0, 0, 1}
+    }
+
 end
 
 return gameboard
