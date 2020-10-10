@@ -1,5 +1,7 @@
 local Object = require("lib/classic")
 local World = require("src/world")
+local Ball = require("src/entities/ball")
+
 local gameboard = Object:extend()
 local physics
 local objects = {} -- physics to hold all our physical objects
@@ -11,6 +13,11 @@ local _gravity_constant     = 9.81
 local _gravity_factor_x     = 0
 local _gravity_factor_y     = 1
 
+local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
+                , _meter * _gravity_constant * _gravity_factor_y
+                , true)
+ 
+
 function gameboard:new()
 
     self.id = "gameboard"
@@ -20,10 +27,11 @@ function gameboard:new()
     love.window.setMode(650, 650) -- set the window dimensions to 650 by 650
     
     love.physics.setMeter(_meter)
-    physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
-                                  , _meter * _gravity_constant * _gravity_factor_y
-                                  , true)
+
+    -- objects["ballTest"] =  Ball(100, 400, 10, 0.5, physics)
+    --objects.ballTest2 = Ball(300, 400, 10, 0.5, physics)
     
+
     self:addShape(  "test", gb_behaviors["behavior_static"], gb_shapes["shape_rectangle"],
                     gb_colors["color_maroon"], 300, 300,
                     500, 100, -1,
@@ -65,6 +73,7 @@ function gameboard:addShape(
             objects[myName .. "_1"].body = love.physics.newBody(myPhysics, x, y, behavior)
             objects[myName .. "_1"].shape = love.physics.newRectangleShape(math.abs(width-height), height)
             objects[myName .. "_1"].fixture = love.physics.newFixture(objects[myName .. "_1"].body, objects[myName .. "_1"].shape, density)
+            
             self:addShape(  (myName .. "_2"), behavior, gb_shapes["shape_circle"],
                             color, (x-math.abs(width-height)/2), y,
                             width, height, (height/2),
@@ -155,3 +164,4 @@ function gameboard.setupEnumerations()
 end
 
 return gameboard
+

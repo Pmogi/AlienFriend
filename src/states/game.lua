@@ -1,24 +1,22 @@
 -- Libraries
 local Timer = require("lib/timer")
-local Gameboard = require("src/gameboard")
-
-
--- Modules
+local GameBoard = require("src/gameboard")
 
 local Game = {}
-
-local Gameboard = Gameboard()
+-- Modules
+local gameBoard
 
 function Game.new()
-    World.new()
-    World.addEntity(gameboard)
+    gameBoard = GameBoard()
 end 
 
 function Game.draw()
-
+    gameBoard.draw()
 end
 
 function Game.update(dt)
+    gameBoard.update(dt)
 end
+
 
 return Game
