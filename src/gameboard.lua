@@ -27,9 +27,9 @@ function gameboard:new()
                                   , _meter * _gravity_constant * _gravity_factor_y
                                   , true)
     
-    self:addShape(  "test", gb_behaviors[behavior_static], gb_shapes["shape_rectangle"],
+    self:addShape(  "test", gb_behaviors["behavior_static"], gb_shapes["shape_rectangle"],
                     gb_colors["color_maroon"], 300, 300,
-                    500, 200, -1,
+                    500, 100, -1,
                     -1, 1, 0,
                     0.5, true, 1,
                     1 , false, 0,
