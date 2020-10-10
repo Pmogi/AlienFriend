@@ -1,11 +1,11 @@
-local Tile = require("src/systems/tile")
+--local Tile = require("src/systems/tile")
 
 local World = {}
 local entityList = {}
-
+local p = 1
 
 function World.new()
-    Tile.initTile(11)
+    --Tile.initTile(11)
 end
 
 -- Add new entity to entity list
@@ -14,6 +14,7 @@ function World.addEntity(entity)
 
     table.insert(entityList, entity)
 end
+
 
 
 -- Updates each entity based on their update function

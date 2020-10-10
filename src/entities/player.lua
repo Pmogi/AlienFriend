@@ -18,7 +18,7 @@ function Player:__toString()
     return self.x .. ", " .. self.y .. ', ' .. self.angle
 end
 
-function Player:update(dt, Tile)
+function Player:update(dt)
     
 end
 
