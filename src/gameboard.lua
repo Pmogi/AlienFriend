@@ -1,92 +1,67 @@
 local Object = require("lib/classic")
 local World = require("src/world")
-local gameboard = Object:extend()
+
+local Ball = require("src/entities/ball")
+
+local GameBoard = {}
 
 local objects = {} -- physics to hold all our physical objects
-local physics
 
 local _meter                = 32
 local _gravity_constant     = 9.81
 local _gravity_factor_x     = 0
 local _gravity_factor_y     = 1
 
-function gameboard.new()
-    --self.id = "gameboard"
+local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
+                , _meter * _gravity_constant * _gravity_factor_y
+                , true)
 
+-- test creating a ball with ball module
+ 
+
+function GameBoard.new()
     love.physics.setMeter(_meter)
-    physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
-                                  , _meter * _gravity_constant * _gravity_factor_y
-                                  , true)
+
+    objects.ballTest =  Ball(100, 400, 10, 0.5, physics)
+    objects.ballTest2 = Ball(300, 400, 10, 0.5, physics)
+
+    print(objects.ballTest)
+    print(objects.ballTest2)
     
-    print("physics.type = " .. type(physics))
-    print("objects.type = " .. type(objects))
     -- let's create the ground
     objects.ground = {}
-    -- remember, the shape (the rectangle we create next) anchors to the
-    -- body from its center, so we have to move it to (650/2, 650-50/2)
     objects.ground.body = love.physics.newBody(physics, 650/2, 650-50/2)
-    -- make a rectangle with a width of 650 and a height of 50
+    
     objects.ground.shape = love.physics.newRectangleShape(650, 50)
-    -- attach shape to body
+   
     objects.ground.fixture = love.physics.newFixture(objects.ground.body,
                                                      objects.ground.shape)
-   
-    -- let's create a ball
-    objects.ball = {}
-    -- place the body in the center of the world and make it dynamic, so
-    -- it can move around
-    objects.ball.body = love.physics.newBody(physics, 650/2, 650/2, "dynamic")
-    -- the ball's shape has a radius of 20
-    objects.ball.shape = love.physics.newCircleShape(20)
-    -- Attach fixture to body and give it a density of 1.
-    objects.ball.fixture = love.physics.newFixture(objects.ball.body,
-                                                   objects.ball.shape, 1)
-    objects.ball.fixture:setRestitution(0.9) -- let the ball bounce
 
-   
-    -- let's create a couple blocks to play around with
-    objects.block1 = {}
-    objects.block1.body = love.physics.newBody(physics, 200, 550, "dynamic")
-    objects.block1.shape = love.physics.newRectangleShape(0, 0, 50, 100)
-    -- A higher density gives it more mass.
-    objects.block1.fixture = love.physics.newFixture(objects.block1.body,
-                                                     objects.block1.shape, 5)
-   
-    objects.block2 = {}
-    objects.block2.body = love.physics.newBody(physics, 200, 400, "dynamic")
-    objects.block2.shape = love.physics.newRectangleShape(0, 0, 100, 50)
-    objects.block2.fixture = love.physics.newFixture(objects.block2.body,
-                                                     objects.block2.shape, 2)
-   
     -- initial graphics setup
     -- set the background color to a nice blue
     love.graphics.setBackgroundColor(0.41, 0.53, 0.97)
     love.window.setMode(650, 650) -- set the window dimensions to 650 by 650
+
+
     
 end
 
-function gameboard.draw()
+function GameBoard.draw()
       -- set the drawing color to green for the ground
   love.graphics.setColor(0.28, 0.63, 0.05)
   -- draw a "filled in" polygon using the ground's coordinates
   love.graphics.polygon("fill", objects.ground.body:getWorldPoints(
                            objects.ground.shape:getPoints()))
-  -- set the drawing color to red for the ball
-  love.graphics.setColor(0.76, 0.18, 0.05)
-  love.graphics.circle("fill", objects.ball.body:getX(),
-                       objects.ball.body:getY(), objects.ball.shape:getRadius())
- 
-  -- set the drawing color to grey for the blocks
-  love.graphics.setColor(0.20, 0.20, 0.20)
-  love.graphics.polygon("fill", objects.block1.body:getWorldPoints(
-                           objects.block1.shape:getPoints()))
-  love.graphics.polygon("fill", objects.block2.body:getWorldPoints(
-                           objects.block2.shape:getPoints()))
+
+  objects.ballTest:draw()
+  objects.ballTest2:draw()
+
+
 end
 
 
-function gameboard.update(dt)
+function GameBoard.update(dt)
     physics:update(dt)
 end
 
-return gameboard
+return GameBoard
