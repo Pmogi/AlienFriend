@@ -54,6 +54,12 @@ function gameboard.draw()
 end
 
 function gameboard.update(dt)
+    for key in pairs(objects) do 
+        if objects[key].alive == false or objects[key].alive == nil then
+            objects[key] = nil
+        end
+    end
+
     physics:update(dt)
 end
 
@@ -109,24 +115,19 @@ function gameboard:addShape(
         objects[myName].shape = love.physics.newPolygonShape(vertices)
         objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
     
-    elseif (shape == gb_shapes["shape_regular"])
-        s = sides
-        r = radius
-        x = x
-        y = y
-        a = angle
+    elseif (shape == gb_shapes["shape_regular"]) then
+        --s = sides
+        --r = radius
+        --x = x
+        --y = y
+        --a = angle
         
-
-        
-
-
-        
-
     end
-    
+
     objects[myName].colors  = color
     objects[myName].depth   = depth
-    
+    objects[myName].alive   = true
+
     -- sort the table to update the draw order
     table.sort(objects, function(a,b) return a[depth] < b[depth] end)
 
@@ -138,15 +139,15 @@ function gameboard.setupEnumerations()
     gb_shapes = 
     {
          shape_circle       = 1     --DONE
-        ,shape_cup          = 2     
-        ,shape_concave      = 3
-        ,shape_convex       = 4
-        ,shape_edge         = 5
-        ,shape_polygon      = 6     --DONE
-        ,shape_rectangle    = 7
-        ,shape_regular      = 8     
-        ,shape_polygon      = 9     --DONE
-        ,shape_spokes       = 10
+        ,shape_cup          = 2     -- a series of pegs
+        ,shape_rectangle    = 3     --DONE
+        ,shape_regular      = 4     
+        ,shape_polygon      = 5     --DONE
+        ,shape_spokes       = 6
+        --,shape_convex       = ?
+        --,shape_edge         = ?
+        --,shape_concave      = ?
+        --,shape_polygon      = ?     
     }
 
     gb_behaviors = 
