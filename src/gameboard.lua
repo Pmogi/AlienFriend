@@ -32,16 +32,16 @@ function gameboard:new()
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
 
-    self:addShape(  "test", gb_behaviors["behavior_static"], gb_shapes["shape_rectangle"],
+    self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
                     gb_colors["color_maroon"], 300, 300,
-                    500, 100, -1,
-                    -1, 1, 0,
+                    200, 28, -1,
+                    -1, 3, 1,
                     0.5, true, 1,
-                    1 , false, 0,
+                    500 , false, 0,
                     false, 0, 100,
-                    physics )
-
-
+                    0, {}, physics )
+    
+    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{},physics)
 end
 
 function gameboard.draw()
@@ -61,10 +61,7 @@ function gameboard.update(dt)
             objects[key] = nil
         end
     end
-
     physics:update(dt)
-
-
 end
 
 function gameboard:addShape(
@@ -81,26 +78,35 @@ function gameboard:addShape(
         if rounded then
             objects[myName .. "_1"] = {}
             objects[myName .. "_1"].body = love.physics.newBody(myPhysics, x, y, behavior)
-            objects[myName .. "_1"].shape = love.physics.newRectangleShape(math.abs(width-height), height)
+                objects[myName .. "_1"].body:setAngularVelocity(rotation)
+            objects[myName .. "_1"].shape = love.physics.newRectangleShape(0,0,math.abs(width-height), height, math.rad(angle))
             objects[myName .. "_1"].fixture = love.physics.newFixture(objects[myName .. "_1"].body, objects[myName .. "_1"].shape, density)
-            
-            self:addShape(  (myName .. "_2"), behavior, gb_shapes["shape_circle"],
-                            color, (x-math.abs(width-height)/2), y,
+
+            self:addShape(  (myName .. "_2"), gb_behaviors["behavior_dynamic"], gb_shapes["shape_circle"],
+                            color, (x - ((math.abs(width-height)/2) * math.cos(math.rad(angle)))), y - ((math.abs(width-height)/2) * math.sin(math.rad(angle))),
                             width, height, (height/2),
                             sides, count, rotation,
                             restitution, rounded, rounding_factor,
                             density, magnetic, magnetic_strength,
                             stroke, stroke_width, depth,
-                            myPhysics )
-            self:addShape(  (myName .. "_3"), behavior, gb_shapes["shape_circle"],
-                            color, (x+math.abs(width-height)/2), y,
+                            0, {}, myPhysics )
+
+            self:addShape(  (myName .. "_3"), gb_behaviors["behavior_dynamic"], gb_shapes["shape_circle"],
+                            color, (x + ((math.abs(width-height)/2) * math.cos(math.rad(angle)))), y + ((math.abs(width-height)/2) * math.sin(math.rad(angle))),
                             width, height, (height/2),
                             sides, count, rotation,
                             restitution, rounded, rounding_factor,
                             density, magnetic, magnetic_strength,
                             stroke, stroke_width, depth,
-                            myPhysics )
+                            0, {}, myPhysics )
+
+            local x2w, y2w = objects[myName .. "_2"].body:getWorldPoints(objects[myName .. "_2"].body:getX(), objects[myName .. "_2"].body:getY())
+            local j2 = love.physics.newWeldJoint(objects[myName .. "_1"].body, objects[myName .. "_2"].body, x2w, y2w, false)
+            local x3w, y3w = objects[myName .. "_3"].body:getWorldPoints(objects[myName .. "_3"].body:getX(), objects[myName .. "_2"].body:getY())
+            local j3 = love.physics.newWeldJoint(objects[myName .. "_1"].body, objects[myName .. "_3"].body, x3w, y3w, false)
+
             myName = (myName .. "_1")
+
         else
             objects[myName] = {}
             objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
@@ -120,18 +126,35 @@ function gameboard:addShape(
         objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
     
     elseif (shape == gb_shapes["shape_regular"]) then
-        --s = sides
-        --r = radius
-        --x = x
-        --y = y
-        --a = angle
-        
+        local myVertices  = {}
+        for i=0, sides-1, 1 do
+            table.insert(myVertices, x+(math.sin(math.rad(((360/sides)*i)+angle))*radius))
+            table.insert(myVertices, y+(math.cos(math.rad(((360/sides)*i)+angle))*radius))
+        end
+
+        self:addShape(myName, behavior, gb_shapes["shape_polygon"], color, x, y,  width, height, radius, sides, count, rotation, restitution, rounded, rounding_factor, density, magnetic, magnetic_strength, stroke, stroke_width, depth, angle, myVertices, myPhysics)
+
+    elseif (shape == gb_shapes["shape_spokes"]) then
+        for i=1, count, 1 do
+            self:addShape((myName .. "_" .. tostring(i)), behavior, gb_shapes["shape_rectangle"], 
+            color, x, y,
+            --x + ((math.abs(width-height)/2) * (math.cos(math.rad(((360/count)-1)*i)))),
+            --y + ((math.abs(width-height)/2) * (math.sin(math.rad(((360/count)-1)*i)))),
+            width, height, radius,
+            sides, count, rotation,
+            restitution, rounded, rounding_factor,
+            density, magnetic, magnetic_strength,
+            stroke, stroke_width, depth,
+            ((360/count)*(i-1)), vertices, myPhysics)
+        end
+        if true then goto continue end
     end
 
     objects[myName].colors  = color
     objects[myName].depth   = depth
     objects[myName].alive   = true
 
+    ::continue::
     -- sort the table to update the draw order
     table.sort(objects, function(a,b) return a[depth] < b[depth] end)
 
@@ -145,13 +168,10 @@ function gameboard.setupEnumerations()
          shape_circle       = 1     --DONE
         ,shape_cup          = 2     -- a series of pegs
         ,shape_rectangle    = 3     --DONE
-        ,shape_regular      = 4     
+        ,shape_regular      = 4     --DONE
         ,shape_polygon      = 5     --DONE
-        ,shape_spokes       = 6
-        --,shape_convex       = ?
-        --,shape_edge         = ?
-        --,shape_concave      = ?
-        --,shape_polygon      = ?     
+        ,shape_spokes       = 6     --DONE
+
     }
 
     gb_behaviors = 
