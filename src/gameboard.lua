@@ -31,17 +31,17 @@ function gameboard:new()
     objects["ballTest"] =  Ball(100, 100, 10, 0.5, physics)
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
-
     self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
                     gb_colors["color_maroon"], 300, 300,
-                    200, 28, -1,
+                    500, 80, -1,
                     -1, 3, 1,
                     0.5, true, 1,
-                    500 , false, 0,
+                    1 , false, 0,
                     false, 0, 100,
-                    0, {}, physics )
+                    0, {}, 10,
+                    physics )
     
-    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{},physics)
+    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
 end
 
 function gameboard.draw()
@@ -72,6 +72,7 @@ function gameboard:addShape(
                             restitution,    rounded,            rounding_factor,
                             density,        magnetic,           magnetic_strength,         
                             stroke,         stroke_width,       depth,
+                            angle,          vertices,           friction,
                             myPhysics )
     local _1flag = false -- helps mediate the keys of objects that are split into multiple parts
     if (shape == gb_shapes["shape_rectangle"]) then
@@ -81,6 +82,8 @@ function gameboard:addShape(
                 objects[myName .. "_1"].body:setAngularVelocity(rotation)
             objects[myName .. "_1"].shape = love.physics.newRectangleShape(0,0,math.abs(width-height), height, math.rad(angle))
             objects[myName .. "_1"].fixture = love.physics.newFixture(objects[myName .. "_1"].body, objects[myName .. "_1"].shape, density)
+            objects[myName .. "_1"].fixture:setFriction(friction)
+            objects[myName .. "_1"].fixture:setRestitution(restitution)
 
             self:addShape(  (myName .. "_2"), gb_behaviors["behavior_dynamic"], gb_shapes["shape_circle"],
                             color, (x - ((math.abs(width-height)/2) * math.cos(math.rad(angle)))), y - ((math.abs(width-height)/2) * math.sin(math.rad(angle))),
@@ -89,7 +92,8 @@ function gameboard:addShape(
                             restitution, rounded, rounding_factor,
                             density, magnetic, magnetic_strength,
                             stroke, stroke_width, depth,
-                            0, {}, myPhysics )
+                            0, {}, friction,
+                            myPhysics )
 
             self:addShape(  (myName .. "_3"), gb_behaviors["behavior_dynamic"], gb_shapes["shape_circle"],
                             color, (x + ((math.abs(width-height)/2) * math.cos(math.rad(angle)))), y + ((math.abs(width-height)/2) * math.sin(math.rad(angle))),
@@ -98,7 +102,8 @@ function gameboard:addShape(
                             restitution, rounded, rounding_factor,
                             density, magnetic, magnetic_strength,
                             stroke, stroke_width, depth,
-                            0, {}, myPhysics )
+                            0, {}, friction,
+                            myPhysics )
 
             local x2w, y2w = objects[myName .. "_2"].body:getWorldPoints(objects[myName .. "_2"].body:getX(), objects[myName .. "_2"].body:getY())
             local j2 = love.physics.newWeldJoint(objects[myName .. "_1"].body, objects[myName .. "_2"].body, x2w, y2w, false)
@@ -118,12 +123,18 @@ function gameboard:addShape(
         objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
         objects[myName].shape = love.physics.newCircleShape(radius)
         objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
+        objects[myName].fixture:setFriction(friction)
+        objects[myName].fixture:setRestitution(restitution)
+
     
     elseif (shape == gb_shapes["shape_polygon"]) then
         objects[myName] = {}
         objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
         objects[myName].shape = love.physics.newPolygonShape(vertices)
         objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
+        objects[myName].fixture:setFriction(friction)
+        objects[myName].fixture:setRestitution(restitution)
+
     
     elseif (shape == gb_shapes["shape_regular"]) then
         local myVertices  = {}
@@ -132,7 +143,7 @@ function gameboard:addShape(
             table.insert(myVertices, y+(math.cos(math.rad(((360/sides)*i)+angle))*radius))
         end
 
-        self:addShape(myName, behavior, gb_shapes["shape_polygon"], color, x, y,  width, height, radius, sides, count, rotation, restitution, rounded, rounding_factor, density, magnetic, magnetic_strength, stroke, stroke_width, depth, angle, myVertices, myPhysics)
+        self:addShape(myName, behavior, gb_shapes["shape_polygon"], color, x, y,  width, height, radius, sides, count, rotation, restitution, rounded, rounding_factor, density, magnetic, magnetic_strength, stroke, stroke_width, depth, angle, myVertices, friction, myPhysics)
 
     elseif (shape == gb_shapes["shape_spokes"]) then
         for i=1, count, 1 do
@@ -145,7 +156,8 @@ function gameboard:addShape(
             restitution, rounded, rounding_factor,
             density, magnetic, magnetic_strength,
             stroke, stroke_width, depth,
-            ((360/count)*(i-1)), vertices, myPhysics)
+            ((360/count)*(i-1)), vertices, friction,
+            myPhysics)
         end
         if true then goto continue end
     end
