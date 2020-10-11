@@ -11,7 +11,7 @@ assets["slime4"] = love.graphics.newImage("assets/slime/slime0004.png")
 
 -- BG Slime
 assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
-assets["aiBG"] = love.graphics.newImage("assets/ai_bg.jpg")
+assets["ocean"] = love.graphics.newImage("assets/Ocean.png")
 
 function Assets.getAsset(key)
     return assets[key]

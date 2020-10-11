@@ -13,6 +13,7 @@ local gameState
 local PlayGame = 0
 local PlayMenu = 1
 local SlimeScreen = 2
+local canSwitch
 
 local gravityFactor = 1 -- increase or decrease gravity with this variable
 
@@ -24,6 +25,7 @@ function love.load()
     Game.new()
     Pet.new()
     gameState = SlimeScreen
+    canSwitch = true
 
 end
 
@@ -43,14 +45,28 @@ end
 function love.update(dt)
     Timer.update(dt)
 
+    -- Switch states
+    if (love.keyboard.isDown("space") and canSwitch) then
+        switchState()
+    end
+
     if (gameState == PlayGame) then
         Game.update(dt)
     
     elseif (gameState == SlimeScreen) then
-
-    Pet.update(dt)
-    
+        Pet.update(dt)
     end
+end
 
+function switchState() 
+    canSwitch = false
+    Timer.after(2, function() canSwitch = true end)
+    
+    if (gameState == PlayGame) then
+        gameState = SlimeScreen
+    
+    elseif (gameState == SlimeScreen) then
+        gameState = PlayGame
+    end
 end
 
