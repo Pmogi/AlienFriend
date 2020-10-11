@@ -26,9 +26,11 @@ function Slime:new(x, y)
     self.x = x or 300
     self.y = y or 300
 
-    self.happy = 0.5
-    self.hungry = 0
+    self.happiness = 0.5
+    self.hunger = 0
     self.growth = 0.1
+    
+    self.type = "Water"
     
     self.xScale = 1
     self.yScale = 1
@@ -38,8 +40,6 @@ function Slime:new(x, y)
     self.blinkTime = 5 -- every 5 seconds randomly decide to blink
     self.blinkTimeStep = 0.1 -- every .1 second iterate through a frame
     self.blink = true
-
-    
     
     -- Blink logic with timers
     Timer.every(self.blinkTimeStep, 
@@ -65,18 +65,27 @@ function Slime:new(x, y)
                 local blink = math.random( 0, 1)
                 if (blink == 1) then self.blink = true end
             end
-        end)
+        end) 
 
     -- end of blink logic
 end
 
 function Slime:update(dt)
+    self:incHunger(dt) 
 
+end
+
+-- function for increasing hunger over time
+function Slime:incHunger(dt) 
+    self.hunger = self.hunger + dt/10
+end
+
+function Slime:modifyHappiness()
 
 end
 
 function Slime:returnStats()
-    return self.happy, self.hungry, self.growth
+    return self.happiness, self.hunger, self.growth
 end
 
 function Slime:draw(growth)

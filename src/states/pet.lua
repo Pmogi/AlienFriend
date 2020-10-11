@@ -1,19 +1,26 @@
 local Slime = require("src/entities/slime")
+local Assets = require("src/assets")
 
 local Pet = {}
 
-local slime = Slime()
+local slime = Slime(300, 500)
 
 function Pet.new()
 
 end
 
 function Pet.draw()
+    love.graphics.draw(Assets.getAsset("aiBG"), 0, 0, 0, 1.3, 1.25)
+
+    love.graphics.rectangle("fill", 0, love.graphics.getHeight()-50, love.graphics.getWidth(), 50)
+
     local happy, hungry, growth = slime:returnStats()
+
     love.graphics.print( "Happiness: " ..  happy .. 
                          "\nHunger: " .. hungry ..
                         '\nGrowth: ' .. growth)
-    slime:draw(growth)
+    slime:draw()
+    
 end
 
 function Pet.update(dt)
