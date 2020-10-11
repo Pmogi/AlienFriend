@@ -9,6 +9,9 @@ assets["slime2"] = love.graphics.newImage("assets/slime/slime0002.png")
 assets["slime3"] = love.graphics.newImage("assets/slime/slime0003.png")
 assets["slime4"] = love.graphics.newImage("assets/slime/slime0004.png")
 
+assets["happyEmote"] = love.graphics.newImage("Assets/speechBubbleHeart1.png")
+assets["sadEmote"] = love.graphics.newImage("Assets/speechBubbleUnhappy1.png")
+
 -- BG Slime
 assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
 assets["ocean"] = love.graphics.newImage("assets/Ocean.png")
