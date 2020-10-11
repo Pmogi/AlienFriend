@@ -27,16 +27,14 @@ function Ball:new(x, y, density, restitution, friction, world)
     -- The "bounce factor"
     self.fixture:setRestitution(self.restitution)
     
-     self.id = "Ball"
+    self.id = "Ball"
 
     self.fixture:setUserData({id = self.id, alive = true})
-
-    self.alive = true -- used to determine if the ball needs to be removed
 end
 
 function Ball:draw()
     love.graphics.setColor(0.68, 0.77, 0.91)
-    love.graphics.circle("fill", self.b:getX(), self.b:getY(), self.s:getRadius())
+    love.graphics.circle("fill", self.body:getX(), self.body:getY(), self.shape:getRadius())
 end
 
 -- Check the 'alive' state of the ball
