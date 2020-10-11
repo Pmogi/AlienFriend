@@ -23,7 +23,7 @@ local objects = {}
 function love.load()
     Game.new()
     Pet.new()
-    gameState = PlayGame
+    gameState = SlimeScreen
 
 end
 
@@ -42,8 +42,15 @@ end
 
 function love.update(dt)
     Timer.update(dt)
-    Game.update(dt)
+
+    if (gameState == PlayGame) then
+        Game.update(dt)
+    
+    elseif (gameState == SlimeScreen) then
+
     Pet.update(dt)
+    
+    end
 
 end
 

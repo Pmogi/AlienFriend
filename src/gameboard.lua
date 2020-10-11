@@ -72,7 +72,7 @@ function gameboard:addShape(
                             restitution,    rounded,            rounding_factor,
                             density,        magnetic,           magnetic_strength,         
                             stroke,         stroke_width,       depth,
-                            angle,          vertices,           myPhysics )
+                            myPhysics )
     local _1flag = false -- helps mediate the keys of objects that are split into multiple parts
     if (shape == gb_shapes["shape_rectangle"]) then
         if rounded then
