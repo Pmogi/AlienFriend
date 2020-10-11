@@ -39,9 +39,7 @@ function gameboard:new()
                     0.5, true, 1,
                     1 , false, 0,
                     false, 0, 100,
-                    physics )
-
-
+                    0, {}, physics )
 end
 
 function gameboard.draw()
@@ -69,7 +67,7 @@ function gameboard:addShape(
                             restitution,    rounded,            rounding_factor,
                             density,        magnetic,           magnetic_strength,         
                             stroke,         stroke_width,       depth,
-                            myPhysics )
+                            angle,          vertices,           myPhysics )
     local _1flag = false -- helps mediate the keys of objects that are split into multiple parts
     if (shape == gb_shapes["shape_rectangle"]) then
         if rounded then
@@ -85,7 +83,7 @@ function gameboard:addShape(
                             restitution, rounded, rounding_factor,
                             density, magnetic, magnetic_strength,
                             stroke, stroke_width, depth,
-                            myPhysics )
+                            0, {}, myPhysics )
             self:addShape(  (myName .. "_3"), behavior, gb_shapes["shape_circle"],
                             color, (x+math.abs(width-height)/2), y,
                             width, height, (height/2),
@@ -93,7 +91,7 @@ function gameboard:addShape(
                             restitution, rounded, rounding_factor,
                             density, magnetic, magnetic_strength,
                             stroke, stroke_width, depth,
-                            myPhysics )
+                            0, {}, myPhysics )
             myName = (myName .. "_1")
         else
             objects[myName] = {}
@@ -106,7 +104,28 @@ function gameboard:addShape(
         objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
         objects[myName].shape = love.physics.newCircleShape(radius)
         objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
+    
+    elseif (shape == gb_shapes["shape_polygon"]) then
+        objects[myName] = {}
+        objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
+        objects[myName].shape = love.physics.newPolygonShape(vertices)
+        objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
+    
+    elseif (shape == gb_shapes["shape_regular"])
+        s = sides
+        r = radius
+        x = x
+        y = y
+        a = angle
+        
+
+        
+
+
+        
+
     end
+    
     objects[myName].colors  = color
     objects[myName].depth   = depth
     
@@ -120,15 +139,15 @@ function gameboard.setupEnumerations()
 
     gb_shapes = 
     {
-         shape_circle       = 1
-        ,shape_cup          = 2
+         shape_circle       = 1     --DONE
+        ,shape_cup          = 2     
         ,shape_concave      = 3
         ,shape_convex       = 4
         ,shape_edge         = 5
-        ,shape_polygon      = 6
+        ,shape_polygon      = 6     --DONE
         ,shape_rectangle    = 7
-        ,shape_regular      = 8
-        ,shape_polygon      = 9
+        ,shape_regular      = 8     
+        ,shape_polygon      = 9     --DONE
         ,shape_spokes       = 10
     }
 
