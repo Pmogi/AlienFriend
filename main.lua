@@ -23,7 +23,7 @@ local objects = {}
 function love.load()
     Game.new()
     Pet.new()
-    gameState = SlimeScreen
+    gameState = PlayGame
 
 end
 
