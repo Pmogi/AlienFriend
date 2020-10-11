@@ -28,8 +28,8 @@ function gameboard:new()
     
     love.physics.setMeter(_meter)
 
-    -- objects["ballTest"] =  Ball(100, 400, 10, 0.5, physics)
-    --objects.ballTest2 = Ball(300, 400, 10, 0.5, physics)
+    objects["ballTest"] =  Ball(100, 100, 10, 0.5, physics)
+    -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
 
     self:addShape(  "test", gb_behaviors["behavior_static"], gb_shapes["shape_rectangle"],
@@ -57,6 +57,8 @@ end
 
 function gameboard.update(dt)
     physics:update(dt)
+
+
 end
 
 function gameboard:addShape(

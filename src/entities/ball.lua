@@ -16,15 +16,19 @@ function Ball:new(x, y, density, restitution, world)
     self.restitution = restitution
 
     -- physics, body, shape, fixture
-    self.b = love.physics.newBody(world, self.x, self.y, "dynamic")
-    self.s = love.physics.newCircleShape(10) -- radius of 10 pixels
-    self.f = love.physics.newFixture(self.b, self.s, self.density) -- 
+    self.body = love.physics.newBody(world, self.x, self.y, "dynamic")
+    self.shape = love.physics.newCircleShape(10) -- radius of 10 pixels
+    self.fixture = love.physics.newFixture(self.body, self.shape, self.density) -- 
+    
+    self.depth = -1
+    self.colors = {0.5, 0.5, 0.5}
     
     -- The "bounce factor"
-     self.f:setRestitution(self.restitution)
+    self.fixture:setRestitution(self.restitution)
     
-    local id = "Ball"
-    -- self.f:setUserData(id)
+     self.id = "Ball"
+
+    self.fixture:setUserData(id)
 
     self.alive = true -- used to determine if the ball needs to be removed
 end

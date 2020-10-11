@@ -15,6 +15,9 @@ function Pet.new()
 end
 
 function Pet.draw()
+    love.graphics.print( "Happiness: " ..  petStats.Happy .. 
+                         "\nHunger: " .. petStats.Hungry ..
+                        '\nGrowth: ' .. petStats.Growth)
     slime:draw()
 end
 
