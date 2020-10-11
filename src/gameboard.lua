@@ -34,10 +34,10 @@ function gameboard:new()
 
     self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
                     gb_colors["color_maroon"], 300, 300,
-                    30, 5, -1,
-                    -1, 3, 5,
+                    200, 28, -1,
+                    -1, 3, 1,
                     0.5, true, 1,
-                    1 , false, 0,
+                    500 , false, 0,
                     false, 0, 100,
                     0, {}, physics )
     
