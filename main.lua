@@ -23,7 +23,7 @@ local objects = {}
 function love.load()
     Game.new()
     Pet.new()
-    gameState = PlayGame
+    gameState = SlimeScreen
 
 end
 
@@ -42,6 +42,7 @@ end
 
 function love.update(dt)
     Timer.update(dt)
+    
     Game.update(dt)
     Pet.update(dt)
 
