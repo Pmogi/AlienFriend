@@ -9,11 +9,12 @@ local _ballCount = 0
 -- Ball object returns a rigid body ball to be used in the pachinko game
 local Ball = Object:extend()
 
-function Ball:new(x, y, density, restitution, world)
+function Ball:new(x, y, density, restitution, friction, world)
     self.x = x 
     self.y = y
     self.density = density
     self.restitution = restitution
+    self.friction = friction
 
     -- physics, body, shape, fixture
     self.body = love.physics.newBody(world, self.x, self.y, "dynamic")
@@ -28,7 +29,7 @@ function Ball:new(x, y, density, restitution, world)
     
      self.id = "Ball"
 
-    self.fixture:setUserData(id)
+    self.fixture:setUserData({id = self.id, alive = true})
 
     self.alive = true -- used to determine if the ball needs to be removed
 end

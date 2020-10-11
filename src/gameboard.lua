@@ -28,16 +28,16 @@ function gameboard:new()
     
     love.physics.setMeter(_meter)
 
-    objects["ballTest"] =  Ball(100, 100, 10, 0.5, physics)
+    objects["ballTest"] =  Ball(100, 100, 10, 0.99, 1, physics)
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
     self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
                     gb_colors["color_maroon"], 300, 300,
-                    500, 80, -1,
+                    800, 80, -1,
                     -1, 3, 1,
-                    0.5, true, 1,
+                    0.99, true, 1,
                     1 , false, 0,
-                    false, 0, 100,
+                    {0,0,0,1}, 2, 100,
                     0, {}, 10,
                     physics )
     
@@ -50,17 +50,35 @@ function gameboard.draw()
         if objects[key].shape:getType() == "polygon" then
             love.graphics.polygon("fill", objects[key].body:getWorldPoints(objects[key].shape:getPoints()))
         elseif objects[key].shape:getType() == "circle" then
-            love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
+            if objects[key].stroke == nil then
+                love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
+            else
+                love.graphics.setColor(objects[key].stroke)
+                love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
+                love.graphics.setColor(objects[key].colors)
+                love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius() - objects[key].stroke_width)
+            end
         end
     end
 end
 
 function gameboard.update(dt)
+
     for key in pairs(objects) do 
-        if objects[key].alive == false or objects[key].alive == nil then
-            objects[key] = nil
+        --if love.keyboard.isDown("f") and objects[key].shape:getType() == 'circle' then
+        --    objects[key].fixture:setUserData({alive = false})
+        --end
+        if objects[key].fixture ~= nil then
+            if objects[key].fixture:getUserData().alive == false then
+                objects[key].fixture:destroy()
+                objects[key].body:destroy()
+                objects[key] = nil
+
+            end
         end
     end
+
+
     physics:update(dt)
 end
 
@@ -117,6 +135,8 @@ function gameboard:addShape(
             objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
             objects[myName].shape = love.physics.newRectangleShape(width, height)
             objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
+            objects[myName]:setFriction(friction)
+            objects[myName]:setRestitution(friction)
         end
     elseif (shape == gb_shapes["shape_circle"]) then
         objects[myName] = {}
@@ -134,6 +154,7 @@ function gameboard:addShape(
         objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
         objects[myName].fixture:setFriction(friction)
         objects[myName].fixture:setRestitution(restitution)
+        
 
     
     elseif (shape == gb_shapes["shape_regular"]) then
@@ -161,10 +182,19 @@ function gameboard:addShape(
         end
         if true then goto continue end
     end
+    
+    objects[myName].fixture:setUserData({id = myName, alive = true})
+    objects[myName].colors       = color
+    objects[myName].depth        = depth
+    objects[myName].stroke       = stroke
+    objects[myName].stroke_width = stroke_width
 
-    objects[myName].colors  = color
-    objects[myName].depth   = depth
-    objects[myName].alive   = true
+    -- if objects[myName].stroke ~= nil and objects[myName].shape:getType() == 'polygon'  then
+    --     print(objects[myName].body:getWorldPoints(objects[myName].shape:getPoints()))
+    --     for c in tostring(objects[myName].body:getWorldPoints(objects[myName].shape:getPoints())) do
+    --         print(i)
+    --     end
+    -- end
 
     ::continue::
     -- sort the table to update the draw order
@@ -199,6 +229,11 @@ function gameboard.setupEnumerations()
     }
 
 end
+
+function gameboard.shrinkPolygon(table)
+    
+end
+
 
 return gameboard
 
