@@ -62,7 +62,16 @@ function gameboard:new()
                     {0,0,0,1}, 2, 100,
                     0, {}, 10,
                     physics )
-
+    
+    self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
+                    gb_colors["color_maroon"], 500, 300,
+                    400, 80, 20,
+                    -1, 3, 1,
+                    0.99, false, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
     
     --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
 end
@@ -164,8 +173,8 @@ function gameboard:addShape(
             objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
             objects[myName].shape = love.physics.newRectangleShape(width, height)
             objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
-            objects[myName]:setFriction(friction)
-            objects[myName]:setRestitution(friction)
+            objects[myName].fixture:setFriction(friction)
+            objects[myName].fixture:setRestitution(restitution)
         end
     elseif (shape == gb_shapes["shape_circle"]) then
         objects[myName] = {}
