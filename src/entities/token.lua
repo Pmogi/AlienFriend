@@ -26,7 +26,8 @@ function Token:new(x, y, world)
     self.depth = -1
     self.colors = {1, 1, 1}
 
-    self.resource
+    self.resource = self:assignResource()
+    self.resourceAmount = 1
     
     self.id = "Token"
 
@@ -43,7 +44,7 @@ function Token:update(dt)
 end
 
 function Token:assignResource()
-
+    local chooseResource = ResourceTypes[math.random( 1, 3 )]
 
 end
 

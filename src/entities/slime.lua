@@ -37,13 +37,13 @@ function Slime:new(x, y)
 
     self.spriteSelection = 1
     self.img = slimeSprites[self.spriteSelection]
-    self.blinkTime = 5 -- every 5 seconds randomly decide to blink
+    self.blinkTime = 1.5 -- every 5 seconds randomly decide to blink
     self.blinkTimeStep = 0.1 -- every .1 second iterate through a frame
     self.blink = false
     
     -- Variables for random emoting to player
     self.emote = false
-    self.emoteTime = 8
+    self.emoteTime = 5
     self.emoteHappy = false
     self.emoteSad = false
     
