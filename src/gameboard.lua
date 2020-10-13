@@ -1,6 +1,7 @@
 local Object = require("lib/classic")
 local World = require("src/world")
 local Ball = require("src/entities/ball")
+local Token = require("src/entities/token")
 
 local gameboard = Object:extend()
 local physics
@@ -29,11 +30,52 @@ local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_fa
     
     love.physics.setMeter(_meter)
 
-    objects["ballTest"] =  Ball(100, 100, 10, 0.99, 1, physics)
+    objects["ballTest"] =  Ball(100, 100, 10, 0.50, 1, physics)
+    objects["testToken"] = Token(250, 250, physics)
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
     --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
     self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
+    self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
+                    gb_colors["color_maroon"], 200, 300,
+                    200, 30, -1,
+                    -1, 3, 1,
+                    0.50, true, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
+
+    self:addShape(  "test2", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
+                    gb_colors["color_maroon"], 100, 100,
+                    200, 30, -1,
+                    -1, 3, 1,
+                    0.50, true, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
+    
+    self:addShape(  "test3", gb_behaviors["behavior_kinematic"], gb_shapes["shape_circle"],
+                    gb_colors["color_maroon"], 500, 300,
+                    400, 80, 20,
+                    -1, 3, 1,
+                    0.99, true, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
+    
+    self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
+                    gb_colors["color_maroon"], 500, 300,
+                    400, 80, 20,
+                    -1, 3, 1,
+                    0.99, false, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
+    
     --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
 end
 
@@ -62,6 +104,10 @@ function gameboard.draw()
         love.graphics.setColor(objects[key].colors)
         if objects[key].shape:getType() == "polygon" then
             love.graphics.polygon("fill", objects[key].body:getWorldPoints(objects[key].shape:getPoints()))
+        
+        elseif(not (objects[key].img == nil)) then -- if it has an img, then draw using the object's draw method
+            objects[key]:draw()
+
         elseif objects[key].shape:getType() == "circle" then
             love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
         end
@@ -104,6 +150,7 @@ function gameboard:addShape(
             objects[myName .. "_1"].fixture:setFriction(friction)
             objects[myName .. "_1"].fixture:setRestitution(restitution)
 
+            -- Weld two circles together at the end of the rectangles to make 'rounded edges'
             self:addShape(  (myName .. "_2"), gb_behaviors["behavior_dynamic"], gb_shapes["shape_circle"],
                             color, (x - ((math.abs(width-height)/2) * math.cos(math.rad(angle)))), y - ((math.abs(width-height)/2) * math.sin(math.rad(angle))),
                             width, height, (height/2),
@@ -124,6 +171,7 @@ function gameboard:addShape(
                             0, {}, friction,
                             myPhysics )
 
+            -- Two joints for attaching the circle shapes
             local x2w, y2w = objects[myName .. "_2"].body:getWorldPoints(objects[myName .. "_2"].body:getX(), objects[myName .. "_2"].body:getY())
             local j2 = love.physics.newWeldJoint(objects[myName .. "_1"].body, objects[myName .. "_2"].body, x2w, y2w, false)
             local x3w, y3w = objects[myName .. "_3"].body:getWorldPoints(objects[myName .. "_3"].body:getX(), objects[myName .. "_2"].body:getY())
@@ -136,8 +184,8 @@ function gameboard:addShape(
             objects[myName].body = love.physics.newBody(myPhysics, x, y, behavior)
             objects[myName].shape = love.physics.newRectangleShape(width, height)
             objects[myName].fixture = love.physics.newFixture(objects[myName].body, objects[myName].shape, density)
-            objects[myName]:setFriction(friction)
-            objects[myName]:setRestitution(friction)
+            objects[myName].fixture:setFriction(friction)
+            objects[myName].fixture:setRestitution(restitution)
         end
     elseif (shape == gb_shapes["shape_circle"]) then
         objects[myName] = {}

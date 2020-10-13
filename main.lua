@@ -60,7 +60,7 @@ end
 
 function switchState() 
     canSwitch = false
-    Timer.after(2, function() canSwitch = true end)
+    Timer.after(1, function() canSwitch = true end)
     
     if (gameState == PlayGame) then
         gameState = SlimeScreen

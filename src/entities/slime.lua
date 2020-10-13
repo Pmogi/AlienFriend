@@ -26,7 +26,7 @@ function Slime:new(x, y)
     self.x = x or 300
     self.y = y or 300
 
-    self.happiness = 0.5
+    self.happiness = 50
     self.hunger = 0
     self.growth = 0.1
     
@@ -37,9 +37,16 @@ function Slime:new(x, y)
 
     self.spriteSelection = 1
     self.img = slimeSprites[self.spriteSelection]
-    self.blinkTime = 5 -- every 5 seconds randomly decide to blink
+    self.blinkTime = 1.5 -- every 5 seconds randomly decide to blink
     self.blinkTimeStep = 0.1 -- every .1 second iterate through a frame
-    self.blink = true
+    self.blink = false
+    
+    -- Variables for random emoting to player
+    self.emote = false
+    self.emoteTime = 5
+    self.emoteHappy = false
+    self.emoteSad = false
+    
     
     -- Blink logic with timers
     Timer.every(self.blinkTimeStep, 
@@ -63,11 +70,26 @@ function Slime:new(x, y)
             
             if (self.blink == false) then
                 local blink = math.random( 0, 1)
+                local emote = math.random( 0, 1)
                 if (blink == 1) then self.blink = true end
+                if (blink == 1) then self.emote = true end
             end
-        end) 
-
+        end)
     -- end of blink logic
+
+
+    Timer.every(self.emoteTime, 
+    function ()
+        if (self.emote == true) then
+            if (self.happiness > 30) then
+                self.emoteHappy = true
+            else 
+                self.emoteSad = true
+            end
+            Timer.after(2, function() self.emoteHappy = false self.emoteSad = false self.emote = false end)
+        end
+    end
+    )
 end
 
 function Slime:update(dt)
@@ -89,8 +111,17 @@ function Slime:returnStats()
 end
 
 function Slime:draw(growth)
+    
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(self.img, self.x, self.y, 0, (self.xScale + self.growth), (self.yScale + self.growth), self.img:getWidth()/2, self.img:getHeight()/2)
+    
+    -- check if an emote is to be drawn
+    if (self.emoteSad == true) then
+        love.graphics.draw(Assets.getAsset("sadEmote"), self.x+40, self.y-40)
+    elseif (self.emoteHappy == true) then  
+        love.graphics.draw(Assets.getAsset("happyEmote"), self.x+40, self.y-40)
+    end
+
 end
 
 
