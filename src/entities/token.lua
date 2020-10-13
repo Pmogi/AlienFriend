@@ -7,11 +7,7 @@ local Assets = require("src/assets")
 
 local Token = Object:extend()
 
-local ResourceTypes = {
-    "Antimatter",
-    "Air Conditioning Unit",
-    "Slime Feed"
-}
+
 
 function Token:new(x, y, world)
     self.x = x 
@@ -22,8 +18,10 @@ function Token:new(x, y, world)
     self.body = love.physics.newBody(world, self.x, self.y, "static")
     self.shape = love.physics.newCircleShape(10) -- radius of 10 pixels
     self.fixture = love.physics.newFixture(self.body, self.shape, self.density) -- 
+
+    self.fixture:setSensor(true)
     
-    self.depth = -1
+    self.depth = 1
     self.colors = {1, 1, 1}
 
     self.resource = self:assignResource()
@@ -42,6 +40,12 @@ end
 function Token:update(dt)
 
 end
+
+local ResourceTypes = {
+    "Antimatter",
+    "Air Conditioning Unit",
+    "Slime Feed"
+}
 
 function Token:assignResource()
     local chooseResource = ResourceTypes[math.random( 1, 3 )]
