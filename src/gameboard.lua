@@ -17,25 +17,28 @@ local _gravity_factor_y     = 1
 local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
                 , _meter * _gravity_constant * _gravity_factor_y
                 , true)
+
  
 
 
-                function gameboard:new()
+    function gameboard:new()
     
-    self.id = "gameboard"
-    self:setupEnumerations()
+        self.id = "gameboard"
+        self:setupEnumerations()
     
-    love.graphics.setBackgroundColor({0.41, 0.53, 0.97})
-    love.window.setMode(650, 650) -- set the window dimensions to 650 by 650
+        love.graphics.setBackgroundColor({0.41, 0.53, 0.97})
+        --love.window.setMode(650, 650) -- set the window dimensions to 650 by 650
     
     love.physics.setMeter(_meter)
 
+    physics:setCallbacks(beginContact, endContact, preSolve, postSolve)
+
     objects["ballTest"] =  Ball(100, 100, 10, 0.50, 1, physics)
-    objects["testToken"] = Token(250, 250, physics)
+    objects["testToken"] = Token(400, 215, physics)
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
-    --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
     self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
+    
     self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
                     gb_colors["color_maroon"], 200, 300,
                     200, 30, -1,
@@ -76,7 +79,6 @@ local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_fa
                     0, {}, 10,
                     physics )
     
-    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
 end
 
 function gameboard:addSimpleCircle(myName, behavior, color, x, y, radius, restitution, density, friction, depth) 
@@ -105,7 +107,7 @@ function gameboard.draw()
         if objects[key].shape:getType() == "polygon" then
             love.graphics.polygon("fill", objects[key].body:getWorldPoints(objects[key].shape:getPoints()))
         
-        elseif(not (objects[key].img == nil)) then -- if it has an img, then draw using the object's draw method
+        elseif(not (value.img == nil)) then -- if it has an img, then draw using the object's draw method
             objects[key]:draw()
 
         elseif objects[key].shape:getType() == "circle" then
@@ -115,14 +117,12 @@ function gameboard.draw()
 end
 
 function gameboard.update(dt)
-
+    -- iterate through the bodies and delete any bodies whose's alive status is false
     for key in pairs(objects) do 
-        if objects[key].fixture ~= nil then
-            if objects[key].fixture:getUserData().alive == false then
-                objects[key].fixture:destroy()
-                objects[key].body:destroy()
-                objects[key] = nil
-            end
+        if objects[key].fixture:getUserData().alive == false then
+            objects[key].fixture:destroy()
+            objects[key].body:destroy()
+            objects[key] = nil
         end
     end
     physics:update(dt)
@@ -295,5 +295,38 @@ function gameboard.setupEnumerations()
 
 end
 
+
+-- Callback functions for handling colissions between fixtures ------------------
+
+-- a and b are different colliding fixtures, coll is the "contact object"
+function beginContact(a, b, coll)
+    if (a:getUserData().id == "Ball" and b:getUserData().id == "Token") then
+       b:setUserData({id = "Token", alive = false}) 
+       print(b:getUserData().alive)
+
+
+    elseif(b:getUserData().id == "Ball" and a:getUserData().id == "Token") then
+        a:setUserData({id = "Token", alive = false}) 
+        print("hello?")
+
+    end
+
+
+end
+ 
+function endContact(a, b, coll)
+ 
+end
+ 
+function preSolve(a, b, coll)
+ 
+end
+ 
+function postSolve(a, b, coll, normalimpulse, tangentimpulse)
+ 
+end
+
+
+----------------------------------------------------------------------------------
 return gameboard
 
