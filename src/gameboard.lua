@@ -18,8 +18,9 @@ local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_fa
                 , true)
  
 
-function gameboard:new()
 
+                function gameboard:new()
+    
     self.id = "gameboard"
     self:setupEnumerations()
     
@@ -31,17 +32,29 @@ function gameboard:new()
     objects["ballTest"] =  Ball(100, 100, 10, 0.99, 1, physics)
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
-    self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-                    gb_colors["color_maroon"], 300, 300,
-                    800, 80, -1,
-                    -1, 3, 1,
-                    0.99, true, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
-    
+    --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
+    self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
     --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
+end
+
+function gameboard:addSimpleCircle(myName, behavior, color, x, y, radius, restitution, density, friction, depth) 
+    self:addShape(myName, behavior, gb_shapes["shape_circle"], color, x, y, 0, 0, radius, 0, 0, 0, restitution, 0, 0, density, 0, 0, nil, 0, depth, 0, {}, friction, physics)
+end
+
+function gameboard:addSimpleRectangle(myName, behavior, color, x, y, width, height, angle, rounded, rotation, restitution, density, friction, depth)
+    self:addShape(myName, behavior, gb_shapes["shape_rectangle"], color, x, y, width, height, 0, 0, 0, rotation, restitution, rounded, 0, density, 0, 0, nil, 0, depth, angle, {}, friction, physics)
+end
+
+function gameboard:addSimpleSpokes(myName, behavior, color, x, y, width, height, rounded, count, angle, rotation, restitution, density, friction, depth)
+    self:addShape(myName, behavior, gb_shapes["shape_spokes"], color, x, y, width, height, 0, 0, count, rotation, restitution, rounded, 0, density, 0, 0, nil, 0, depth, angle, {}, friction, physics)
+end
+
+function gameboard:addSimpleRegular(myName, behavior, color, x, y, radius, restitution, density, depth, angle, friction)
+    self:addShape(myName, behavior, gb_shapes["shape_regular"], color, x, y, 0, 0, radius, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, {}, friction, physics)
+end
+
+function gameboard:addSimpleSlope(myName, behavior, color, x, y, width, count, angle, rotation, restitution, density, friction, depth)
+    self:addShape(myName, behavior, gb_shapes["shape_slope"], color, x, y, width, 0, 0, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics)
 end
 
 function gameboard.draw()
@@ -50,14 +63,7 @@ function gameboard.draw()
         if objects[key].shape:getType() == "polygon" then
             love.graphics.polygon("fill", objects[key].body:getWorldPoints(objects[key].shape:getPoints()))
         elseif objects[key].shape:getType() == "circle" then
-            if objects[key].stroke == nil then
-                love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
-            else
-                love.graphics.setColor(objects[key].stroke)
-                love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
-                love.graphics.setColor(objects[key].colors)
-                love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius() - objects[key].stroke_width)
-            end
+            love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
         end
     end
 end
@@ -65,20 +71,14 @@ end
 function gameboard.update(dt)
 
     for key in pairs(objects) do 
-        --if love.keyboard.isDown("f") and objects[key].shape:getType() == 'circle' then
-        --    objects[key].fixture:setUserData({alive = false})
-        --end
         if objects[key].fixture ~= nil then
             if objects[key].fixture:getUserData().alive == false then
                 objects[key].fixture:destroy()
                 objects[key].body:destroy()
                 objects[key] = nil
-
             end
         end
     end
-
-
     physics:update(dt)
 end
 
@@ -97,9 +97,10 @@ function gameboard:addShape(
         if rounded then
             objects[myName .. "_1"] = {}
             objects[myName .. "_1"].body = love.physics.newBody(myPhysics, x, y, behavior)
-                objects[myName .. "_1"].body:setAngularVelocity(rotation)
+            objects[myName .. "_1"].body:setAngularVelocity(rotation)
             objects[myName .. "_1"].shape = love.physics.newRectangleShape(0,0,math.abs(width-height), height, math.rad(angle))
             objects[myName .. "_1"].fixture = love.physics.newFixture(objects[myName .. "_1"].body, objects[myName .. "_1"].shape, density)
+
             objects[myName .. "_1"].fixture:setFriction(friction)
             objects[myName .. "_1"].fixture:setRestitution(restitution)
 
@@ -155,8 +156,6 @@ function gameboard:addShape(
         objects[myName].fixture:setFriction(friction)
         objects[myName].fixture:setRestitution(restitution)
         
-
-    
     elseif (shape == gb_shapes["shape_regular"]) then
         local myVertices  = {}
         for i=0, sides-1, 1 do
@@ -170,8 +169,6 @@ function gameboard:addShape(
         for i=1, count, 1 do
             self:addShape((myName .. "_" .. tostring(i)), behavior, gb_shapes["shape_rectangle"], 
             color, x, y,
-            --x + ((math.abs(width-height)/2) * (math.cos(math.rad(((360/count)-1)*i)))),
-            --y + ((math.abs(width-height)/2) * (math.sin(math.rad(((360/count)-1)*i)))),
             width, height, radius,
             sides, count, rotation,
             restitution, rounded, rounding_factor,
@@ -181,22 +178,41 @@ function gameboard:addShape(
             myPhysics)
         end
         if true then goto continue end
-    end
+
+    elseif (shape == gb_shapes["shape_cup"]) then
+        
     
+    elseif (shape == gb_shapes["shape_slope"]) then
+        print(angle)
+        local dx = math.cos(math.rad(angle))
+        local dy = math.sin(math.rad(angle))
+        local pos = {}
+        if count == 1 then
+            table.insert(pos, 0)
+        else
+            table.insert(pos, 0 - (width/2))
+            for i=2, count-1, 1 do
+                table.insert(pos,(width/-2) + ((i-1)/(count-1) * width))
+            end
+            table.insert(pos,width/2)
+        end
+        for a,b in pairs(pos) do
+            print(x .. " | " .. dx .. " | " .. b)
+            self:addShape((myName .. "_" .. a), behavior, gb_shapes["shape_circle"], color,
+            x+(dx*b), y+(dy*b),
+            width, height, radius, sides, count, rotation, restitution, rounded, rounding_factor, density, magnetic, magnetic_strength, stroke, stroke_width, depth, angle, vertices, friction, myPhysics)
+        end
+        return
+    end
+
     objects[myName].fixture:setUserData({id = myName, alive = true})
     objects[myName].colors       = color
     objects[myName].depth        = depth
     objects[myName].stroke       = stroke
     objects[myName].stroke_width = stroke_width
 
-    -- if objects[myName].stroke ~= nil and objects[myName].shape:getType() == 'polygon'  then
-    --     print(objects[myName].body:getWorldPoints(objects[myName].shape:getPoints()))
-    --     for c in tostring(objects[myName].body:getWorldPoints(objects[myName].shape:getPoints())) do
-    --         print(i)
-    --     end
-    -- end
-
     ::continue::
+
     -- sort the table to update the draw order
     table.sort(objects, function(a,b) return a[depth] < b[depth] end)
 
@@ -213,6 +229,7 @@ function gameboard.setupEnumerations()
         ,shape_regular      = 4     --DONE
         ,shape_polygon      = 5     --DONE
         ,shape_spokes       = 6     --DONE
+        ,shape_slope        = 7     --DONE
 
     }
 
@@ -229,11 +246,6 @@ function gameboard.setupEnumerations()
     }
 
 end
-
-function gameboard.shrinkPolygon(table)
-    
-end
-
 
 return gameboard
 
