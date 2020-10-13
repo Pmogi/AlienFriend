@@ -9,15 +9,15 @@ local Slime = Object:extend()
 
 -- A list of sprites that if iterated through has a blinking slime
 local slimeSprites = {
-    Assets.getAsset("slime0"),
-    Assets.getAsset("slime1"),
-    Assets.getAsset("slime2"),
-    Assets.getAsset("slime3"),
-    Assets.getAsset("slime4"),
-    Assets.getAsset("slime3"),
-    Assets.getAsset("slime2"),
-    Assets.getAsset("slime1"),
-    Assets.getAsset("slime0")
+    Assets.getAsset("rSlime0"),
+    Assets.getAsset("rSlime1"),
+    Assets.getAsset("rSlime2"),
+    Assets.getAsset("rSlime3"),
+    Assets.getAsset("rSlime4"),
+    Assets.getAsset("rSlime3"),
+    Assets.getAsset("rSlime2"),
+    Assets.getAsset("rSlime1"),
+    Assets.getAsset("rSlime0")
 }
 
 

@@ -301,13 +301,12 @@ end
 -- a and b are different colliding fixtures, coll is the "contact object"
 function beginContact(a, b, coll)
     if (a:getUserData().id == "Ball" and b:getUserData().id == "Token") then
-       b:setUserData({id = "Token", alive = false}) 
-       print(b:getUserData().alive)
+       b:setUserData({alive = false}) 
 
 
     elseif(b:getUserData().id == "Ball" and a:getUserData().id == "Token") then
-        a:setUserData({id = "Token", alive = false}) 
-        print("hello?")
+        a:setUserData({alive = false}) 
+        
 
     end
 

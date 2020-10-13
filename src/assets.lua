@@ -9,6 +9,13 @@ assets["slime2"] = love.graphics.newImage("assets/slime/slime0002.png")
 assets["slime3"] = love.graphics.newImage("assets/slime/slime0003.png")
 assets["slime4"] = love.graphics.newImage("assets/slime/slime0004.png")
 
+-- red slime
+assets["rSlime0"] = love.graphics.newImage("assets/fireSlime/fireSlime0000.png")
+assets["rSlime1"] = love.graphics.newImage("assets/fireSlime/fireSlime0001.png")
+assets["rSlime2"] = love.graphics.newImage("assets/fireSlime/fireSlime0002.png")
+assets["rSlime3"] = love.graphics.newImage("assets/fireSlime/fireSlime0003.png")
+assets["rSlime4"] = love.graphics.newImage("assets/fireSlime/fireSlime0004.png")
+
 -- Emotion Bubbles
 assets["happyEmote"] = love.graphics.newImage("Assets/speechBubbleHeart1.png")
 assets["sadEmote"] = love.graphics.newImage("Assets/speechBubbleUnhappy1.png")
