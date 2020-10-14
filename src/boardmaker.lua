@@ -12,27 +12,56 @@ local p = {} -- parameter array
 local ball = 10
 local climate = "hot"
 local ids = {}
+local gb = 0
 
-function boardmaker:new(_width, _height, physics)
+math.randomseed(os.time())
+
+function boardmaker:normalizeProbabilities(_probabilities)
+    local sum = 0
+    local probabilities = _probabilities
+    for a,b in pairs(probabilities) do
+        sum = sum + b[1]
+    end
+    for a,b in pairs(probabilities) do
+        --print(b[1])
+        probabilities[b] = { (b[1] * 1/sum) , { (b[2])[1], (b[2])[1] } }
+    end
+    return probabilities
+end
+
+
+function boardmaker:new(_width, _height, gameboard)
     width, height = _width, _height
+    gb = gameboard
     self:buildParameters()
     self:buildMap()
+    
+    self:generateRandomFeatures("random", 1000)
 end
 
-function boardmaker:generateRandomFeatures()
-
+function boardmaker:generateRandomFeatures(_mode, _count)
+    print("hello world!")
+    --if _count == nil then self:generateRandomFeatures(_mode) end
+    if _mode == "random" then
+        for i=0,_count,1 do
+            self:generatePiece(p.shape.list[math.random(1,#p.shape.list)],math.random(0,720),math.random(0,720))
+        end
+    end
 end
 
-
+--function boardmaker:generateRandomFeatures(_mode)
+--    print("what")
+--end
 
 function boardmaker:generatePiece(shape, x, y)
     local   behavior, color, radius, restitution,
             density, friction, depth, gap, name
-            width, height, angle, sides, count, profile
-    name = (shape .. "_" .. tostring(popID(shape)))
-    behavior = selectBehavior(shape)
-    color = selectFromOdds(p.climate[climate])
-    profile = selectFromOdds(p.profile.list)
+            width, height, angle, sides, count, profile = nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+    name = (shape .. "_" .. tostring(self:popID(shape)))
+    behavior = self:selectBehavior(shape)
+    color = self:selectFromOdds(p.climate[climate])
+    profile = self:selectFromOdds(p.profile.list)
+    pattern = self:selectFromOdds(p.patterns)
     density = p.profile[profile].density
     restitution = p.profile[profile].restitution
     friction = p.profile[profile].friction
@@ -72,45 +101,57 @@ function boardmaker:generatePiece(shape, x, y)
             depth = p.standard_depth
         else depth = 100 end
         if p.shape[shape].angle then
-            angle = selectFromOdds(p.shape[shape].angle)
+            local _angle = self:selectFromOdds((p.shape[shape].angle))
+            angle = math.random(_angle[1], _angle[2])
         else angle = 0 end
         if p.shape[shape].gap then
             if p.shape[shape].gap.min and p.shape[shape].gap.max then
                 gap = math.random(p.shape[shape].gap.min, p.shape[shape].gap.max)
-            else gap = ball*2+2
-        else gap = ball*2+2
-    else return
+            else gap = ball*2+2 end
+        else gap = ball*2+2 end
+    else return nil end
 
-    local margin = p.shape.margin
-    if shape == "circle" then
-        gameboard:addSimpleCircle(name, behavior, color, x, y, radius, restitution, density, friction, depth)
+    local margin = p.shape.margins
+    print("shape = " .. shape .. " | " .. x .. " | " .. y)
+    --if shape == "circle" and not self:checkMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin) then
+    if shape == "circle" and not self:checkMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin) then
+        gb:addSimpleCircle(name, behavior, color, x, y, radius, restitution, density, friction, depth)
         self:setMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin)
-    elseif shape == "rectangle" then
-        gameboard:addSimpleRectangle(name, behavior, color, x, y, width, height, angle, rounded, rotation, restitution, density, friction, depth)
+    elseif shape == "rectangle" and not self:checkMap(x-(width/2)-margin,y-(height/2)-margin,x+(width/2)+margin,y+(height/2)+margin) then
+        gb:addSimpleRectangle(name, behavior, color, x, y, width, height, angle, rounded, rotation, restitution, density, friction, depth)
         self:setMap(x-(width/2)-margin,y-(height/2)-margin,x+(width/2)+margin,y+(height/2)+margin)
-    elseif shape == "spokes" then
-        gameboard:addSimpleSpokes(name, behavior, color, x, y, width, height, rounded, count, angle, rotation, restitution, density, friction, depth)
+    elseif shape == "spokes" and not self:checkMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin) then
+        gb:addSimpleSpokes(name, behavior, color, x, y, width, height, rounded, count, angle, rotation, restitution, density, friction, depth)
         self:setMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin)
-    elseif shape == "regular" then
-        gameboard:addSimpleRegular(name, behavior, color, x, y, radius, sides, angle, rotation, restitution, density, depth, friction)
+    elseif shape == "regular" and not self:checkMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin) then
+        gb:addSimpleRegular(name, behavior, color, x, y, radius, sides, angle, rotation, restitution, density, depth, friction)
         self:setMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin)
-    elseif shape == "slope" then
-        gameboard:addSimpleSlope(name, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth)
-        
-    elseif shape == "cup" then
-        gameboard:addSimpleCup(name, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth, gap)
+    elseif shape == "slope" and not self:checkMap(x-(width*math.cos(math.rad(angle)))/2,y-(height*math.sin(math.rad(angle)))/2,x-(width*math.cos(math.rad(angle)))/2,y-(height*math.sin(math.rad(angle)))/2) then
+        gb:addSimpleSlope(name, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth)
+        self:setMap(x-(width*math.cos(math.rad(angle)))/2,y-(height*math.sin(math.rad(angle)))/2,x-(width*math.cos(math.rad(angle)))/2,y-(height*math.sin(math.rad(angle)))/2)
+    elseif shape == "cup" and not self:checkMap(x-width-(gap/2),y-height/2,x+width+(gap/2),y+height/2) then
+        gb:addSimpleCup(name, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth, gap)
+        self:setMap(x-width-(gap/2),y-height/2,x+width+(gap/2),y+height/2)
     end
         
 end
 
 function boardmaker:buildParameters()
-    p.shape.margins = 10
+    
+
+    p.patterns = {  {   1.00    ,   {   "3xcluster"     ,   {"circle"}                                  }}   ,
+                    {   1.00    ,   {   "mirror"        ,   {"rectangle", "spokes", "regular", "slope"} }}   ,
+                    {   1.00    ,   {   "3xrow"         ,   {"circle","cup"}                            }} 
+                 }
+
+    p.patterns = self:normalizeProbabilities(p.patterns)
 
     p.climate = {}
     p.climate.list = {"hot","cold"}
-    p.climate.hot = {0.2, {1,0,0,1}, 0.8, {0.7,0.1,0.1,1}}  --these are incomplete right now
-    p.climate.cold = {0.2, {0,0,1,1}, 0.8, {0.1,0.1,0.7,1}} --these are incomplete right now
+    p.climate.hot = {{0.2, {1,0,0,1}}, {0.8, {0.7,0.1,0.1,1}}}  --these are incomplete right now
+    p.climate.cold = {{0.2, {0,0,1,1}},{ 0.8, {0.1,0.1,0.7,1}}} --these are incomplete right now
     for a,b in pairs(p.climate.list) do
+        --print(b .. " | " ..  tostring(((p.climate[b])[1])[1]))
         p.climate[b] = self:normalizeProbabilities(p.climate[b]) -- in theory this will work
     end
 
@@ -123,9 +164,11 @@ function boardmaker:buildParameters()
     p.behavior.slope        = {0.92,0.08,0.00}
     p.behavior.cup          = {0.98,0.02,0.00}
     for a,b in pairs(p.behavior) do
-        b[1] = b[1]/(b[1]+b[2]+b[3])
-        b[2] = b[2]/(b[1]+b[2]+b[3])
-        b[3] = b[3]/(b[1]+b[2]+b[3])
+        if a ~= "list" then 
+            b[1] = b[1]/(b[1]+b[2]+b[3])
+            b[2] = b[2]/(b[1]+b[2]+b[3])
+            b[3] = b[3]/(b[1]+b[2]+b[3])
+        end
     end
 
     p.colors = {}
@@ -148,6 +191,7 @@ function boardmaker:buildParameters()
     p.y.slots.height.min, p.y.slots.height.max  = 50, 50
 
     p.shape = {}
+    p.shape.margins = 10
     p.shape.list = {"circle", "rectangle", "spokes", "regular", "slope", "cup"}
     p.shape.circle, p.shape.rectangle, p.shape.spokes, 
         p.shape.regular, p.shape.slope, p.shape.cup = {},{},{},{},{},{}
@@ -200,7 +244,7 @@ function boardmaker:buildParameters()
     p.shape.slope.radius.min, p.shape.slope.radius.max = 10, 20
     p.shape.slope.count.min, p.shape.slope.count.max = nil, nil -- to be calculated on the fly
     p.shape.slope.rotation = {}
-    p.shape.slope.rotation.min, p.shape.rotation.slope.max = 1, 5
+    p.shape.slope.rotation.min, p.shape.slope.rotation.max = 1, 5
     p.shape.slope.angle = {     { 0.10 , { 00 , 00 } }  ,
                                 { 0.40 , { 10 , 30 } }  ,
                                 { 0.30 , { 35 , 45 } }  ,
@@ -235,12 +279,16 @@ function boardmaker:buildParameters()
                         {1.00, "hardrough"}  ,
                         {1.00, "dampening"}  ,
                         {1.00, "bouncyplus"} ,
-                        {1.00, "stopper" }
+                        {1.00, "stopper" } }
 
-    p.profile.list = normalizeProbabilities(p.profile.list)
+    p.profile.list = self:normalizeProbabilities(p.profile.list)
     for a,b in pairs(p.profile.list) do
-        profile[b[2]] = {}
+        p.profile[b[2]] = {}
     end
+
+    --for a,b in pairs(p.profile.list) do
+    --    print(a .. " ||| " .. tostring((b[2])[1]))
+    --end
     
     p.profile.  normal      .   density     = 1
     p.profile.  bouncy      .   density     = 2
@@ -262,13 +310,11 @@ function boardmaker:buildParameters()
     p.profile.  stopper     .   friction    = 100000
 
     p.standard_depth = 100
-
-
 end
 
-function selectBehavior(shape)
+function boardmaker:selectBehavior(shape)
     local odds_table, sum = {} , 0
-    for a,b in pairs(b.behavior[shape]) do
+    for a,b in pairs(p.behavior[shape]) do
         odds_table[a] = b+sum
         sum = sum+b
     end
@@ -282,7 +328,7 @@ function selectBehavior(shape)
     return p.behavior.list[selection]
 end
 
-function selectFromOdds(probabilities_table)
+function boardmaker:selectFromOdds(probabilities_table)
     local odds_table, sum = {} , 0
     for a,b in pairs(probabilities_table) do
         odds_table[a] = b[1]+sum
@@ -290,7 +336,7 @@ function selectFromOdds(probabilities_table)
     end
     local r, flag, selection = math.random(), false, 1
     for a,b in pairs(odds_table) do
-        if flag == false and b[1] > r then
+        if flag == false and b > r then -- b > r was b[1] > r at some point
             flag = true
             selection = a
         end
@@ -298,15 +344,25 @@ function selectFromOdds(probabilities_table)
     return (probabilities_table[selection])[2]
 end
 
-function checkMap(x,y)
+function boardmaker:checkMap(x,y)
     return map[(x*width)+y+1]
 end
 
-function setMap(x,y)
+function boardmaker:checkMap(x1,y1, x2, y2)
+    local f = false
+    for x=x1,x2,1 do
+        for y=y1,y2,1 do
+            if map[(x*width)+y+1] then f = true end
+        end
+    end
+    return f
+end
+
+function boardmaker:setMap(x,y)
     map[(x*width)+y+1] = true
 end
 
-function setMap(x1,y1,x2,y2)
+function boardmaker:setMap(x1,y1,x2,y2)
     for x=x1,x2,1 do
         for y=y1,y2,1 do
             map[(x*width)+y+1] = true
@@ -314,49 +370,39 @@ function setMap(x1,y1,x2,y2)
     end
 end
 
-function buildMap()
+function boardmaker:buildMap()
     for i=1, (width*height)+1, 1 do
         map[i] = false
     end
 end
 
-function setBallRadius(radius)
+function boardmaker:setBallRadius(radius)
     ball = radius
 end
 
-function normalizeProbabilities(probabilities)
-    local sum = 0
-    for a,b in pairs(probabilities) do
-        sum = sum + b[1]
-    end
-    for a,b in pairs(probabilities) do
-        probabilities[a] = { (b[1] * 1/sum) , { (b[2])[1], (b[2])[1] } }
-    end
-    return probabilities
-end
 
-function setClimate(new_climate)
+function boardmaker:setClimate(new_climate)
     climate = new_climate
     local flag = false
     for a,b in pairs(p.climate.list) do
-        if climate = b then
+        if climate == b then
             return climate
         end
     end
     return p.climate.list[1] -- set to the first climate in the list if this function fails
 end
 
-function getClimate()
+function boardmaker:getClimate()
     return climate
 end
 
-function buildIDs()
+function boardmaker:buildIDs()
     for a,b in pairs(p.shapes.list) do
         ids[b] = 0
     end
 end
 
-function popID(shape)
+function boardmaker:popID(shape)
     if ids[shape] then
         ids[shape] = ids[shape] + 1
         return (ids[shape]-1)

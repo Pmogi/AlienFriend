@@ -18,6 +18,10 @@ local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_fa
                 , _meter * _gravity_constant * _gravity_factor_y
                 , true)
 
+function gameboard:getPhysics()
+    return physics
+end
+
 function gameboard:new()
     self.id = "gameboard"
     self:setupEnumerations()
@@ -33,49 +37,49 @@ function gameboard:new()
     
     --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
     --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
-    self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
-    self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-                    gb_colors["color_maroon"], 200, 300,
-                    200, 30, -1,
-                    -1, 3, 1,
-                    0.50, true, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
-
-    self:addShape(  "test2", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-                    gb_colors["color_maroon"], 100, 100,
-                    200, 30, -1,
-                    -1, 3, 1,
-                    0.50, true, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
-    
-    self:addShape(  "test3", gb_behaviors["behavior_kinematic"], gb_shapes["shape_circle"],
-                    gb_colors["color_maroon"], 500, 300,
-                    400, 80, 20,
-                    -1, 3, 1,
-                    0.99, true, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
-    
-    self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
-                    gb_colors["color_maroon"], 500, 300,
-                    400, 80, 20,
-                    -1, 3, 1,
-                    0.99, false, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
+    --self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
+    --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
+    --                gb_colors["color_maroon"], 200, 300,
+    --                200, 30, -1,
+    --                -1, 3, 1,
+    --                0.50, true, 1,
+    --                1 , false, 0,
+    --                {0,0,0,1}, 2, 100,
+    --                0, {}, 10,
+    --                physics )
+--
+    --self:addShape(  "test2", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
+    --                gb_colors["color_maroon"], 100, 100,
+    --                200, 30, -1,
+    --                -1, 3, 1,
+    --                0.50, true, 1,
+    --                1 , false, 0,
+    --                {0,0,0,1}, 2, 100,
+    --                0, {}, 10,
+    --                physics )
+    --
+    --self:addShape(  "test3", gb_behaviors["behavior_kinematic"], gb_shapes["shape_circle"],
+    --                gb_colors["color_maroon"], 500, 300,
+    --                400, 80, 20,
+    --                -1, 3, 1,
+    --                0.99, true, 1,
+    --                1 , false, 0,
+    --                {0,0,0,1}, 2, 100,
+    --                0, {}, 10,
+    --                physics )
+    --
+    --self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
+    --                gb_colors["color_maroon"], 500, 300,
+    --                400, 80, 20,
+    --                -1, 3, 1,
+    --                0.99, false, 1,
+    --                1 , false, 0,
+    --                {0,0,0,1}, 2, 100,
+    --                0, {}, 10,
+    --                physics )
 end
 
-function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth) 
+function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth)
     self:addShape(myName, behavior, gb_shapes["shape_circle"], color, x, y, 0, 0, radius, 0, 0, 0, restitution, 0, 0, density, 0, 0, nil, 0, depth, 0, {}, friction, physics)
 end
 
@@ -232,7 +236,6 @@ function gameboard:addShape(
         
     
     elseif (shape == gb_shapes["shape_slope"]) then
-        print(angle)
         local dx = math.cos(math.rad(angle))
         local dy = math.sin(math.rad(angle))
         local pos = {}
@@ -246,7 +249,7 @@ function gameboard:addShape(
             table.insert(pos,width/2)
         end
         for a,b in pairs(pos) do
-            print(x .. " | " .. dx .. " | " .. b)
+            --print(x .. " | " .. dx .. " | " .. b)
             self:addShape((myName .. "_" .. a), behavior, gb_shapes["shape_circle"], color,
             x+(dx*b), y+(dy*b),
             width, height, radius, sides, count, rotation, restitution, rounded, rounding_factor, density, magnetic, magnetic_strength, stroke, stroke_width, depth, angle, vertices, friction, myPhysics)
@@ -294,7 +297,7 @@ function gameboard.setupEnumerations()
     }
 end
 
-function gameboard.getColors{}
+function gameboard.getColors()
     return gb_colors
 end
 
