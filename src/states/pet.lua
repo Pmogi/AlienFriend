@@ -10,7 +10,7 @@ function Pet.new()
 end
 
 function Pet.draw()
-    love.graphics.draw(Assets.getAsset("ocean"), 0, 0, 0, 1.3, 1.25)
+    love.graphics.draw(Assets.getAsset("ocean"), 20, -50, 0)
 
     love.graphics.rectangle("fill", 0, love.graphics.getHeight()-50, love.graphics.getWidth(), 50)
 
@@ -20,7 +20,6 @@ function Pet.draw()
                          "\nHunger: " .. hungry ..
                         '\nGrowth: ' .. growth)
     slime:draw()
-    
 end
 
 function Pet.update(dt)

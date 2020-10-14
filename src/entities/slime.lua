@@ -28,7 +28,7 @@ function Slime:new(x, y)
 
     self.happiness = 50
     self.hunger = 0
-    self.growth = 0.1
+    self.growth = 0.5
     
     self.type = "Water"
     
@@ -37,13 +37,13 @@ function Slime:new(x, y)
 
     self.spriteSelection = 1
     self.img = slimeSprites[self.spriteSelection]
-    self.blinkTime = 1.5 -- every 5 seconds randomly decide to blink
+    self.blinkTime = 4 -- every 5 seconds randomly decide to blink
     self.blinkTimeStep = 0.1 -- every .1 second iterate through a frame
     self.blink = false
     
     -- Variables for random emoting to player
     self.emote = false
-    self.emoteTime = 5
+    self.emoteTime = 9
     self.emoteHappy = false
     self.emoteSad = false
     
@@ -94,7 +94,6 @@ end
 
 function Slime:update(dt)
     self:incHunger(dt) 
-
 end
 
 -- function for increasing hunger over time
@@ -102,15 +101,15 @@ function Slime:incHunger(dt)
     self.hunger = self.hunger + dt/10
 end
 
-function Slime:modifyHappiness()
-
+function Slime:incHappiness(dt)
+    self.happiness = self.happiness + 
 end
 
 function Slime:returnStats()
     return self.happiness, self.hunger, self.growth
 end
 
-function Slime:draw(growth)
+function Slime:draw()
     
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(self.img, self.x, self.y, 0, (self.xScale + self.growth), (self.yScale + self.growth), self.img:getWidth()/2, self.img:getHeight()/2)

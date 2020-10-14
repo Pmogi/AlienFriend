@@ -26,6 +26,7 @@ function love.load()
     Pet.new()
     gameState = SlimeScreen
     canSwitch = true
+    math.randomseed(os.time())
 
 end
 
