@@ -17,17 +17,14 @@ local _gravity_factor_y     = 1
 local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
                 , _meter * _gravity_constant * _gravity_factor_y
                 , true)
- 
 
-
-                function gameboard:new()
-    
+function gameboard:new()
     self.id = "gameboard"
     self:setupEnumerations()
     
     love.graphics.setBackgroundColor({0.41, 0.53, 0.97})
-    love.window.setMode(650, 650) -- set the window dimensions to 650 by 650
-    
+    love.window.setMode(720, 720) -- set the window dimensions to 650 by 650
+
     love.physics.setMeter(_meter)
 
     objects["ballTest"] =  Ball(100, 100, 10, 0.50, 1, physics)
@@ -35,6 +32,7 @@ local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_fa
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     
     --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
+    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
     self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
     self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
                     gb_colors["color_maroon"], 200, 300,
@@ -75,28 +73,31 @@ local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_fa
                     {0,0,0,1}, 2, 100,
                     0, {}, 10,
                     physics )
-    
-    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
 end
 
-function gameboard:addSimpleCircle(myName, behavior, color, x, y, radius, restitution, density, friction, depth) 
+function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth) 
     self:addShape(myName, behavior, gb_shapes["shape_circle"], color, x, y, 0, 0, radius, 0, 0, 0, restitution, 0, 0, density, 0, 0, nil, 0, depth, 0, {}, friction, physics)
 end
 
-function gameboard:addSimpleRectangle(myName, behavior, color, x, y, width, height, angle, rounded, rotation, restitution, density, friction, depth)
+function gameboard:addSimpleRectangle   (myName, behavior, color, x, y, width, height, angle, rounded, rotation, restitution, density, friction, depth)
     self:addShape(myName, behavior, gb_shapes["shape_rectangle"], color, x, y, width, height, 0, 0, 0, rotation, restitution, rounded, 0, density, 0, 0, nil, 0, depth, angle, {}, friction, physics)
 end
 
-function gameboard:addSimpleSpokes(myName, behavior, color, x, y, width, height, rounded, count, angle, rotation, restitution, density, friction, depth)
+function gameboard:addSimpleSpokes      (myName, behavior, color, x, y, width, height, rounded, count, angle, rotation, restitution, density, friction, depth)
     self:addShape(myName, behavior, gb_shapes["shape_spokes"], color, x, y, width, height, 0, 0, count, rotation, restitution, rounded, 0, density, 0, 0, nil, 0, depth, angle, {}, friction, physics)
 end
 
-function gameboard:addSimpleRegular(myName, behavior, color, x, y, radius, restitution, density, depth, angle, friction)
-    self:addShape(myName, behavior, gb_shapes["shape_regular"], color, x, y, 0, 0, radius, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, {}, friction, physics)
+function gameboard:addSimpleRegular     (myName, behavior, color, x, y, radius, sides, angle, rotation, restitution, density, depth, friction)
+    self:addShape(myName, behavior, gb_shapes["shape_regular"], color, x, y, 0, 0, radius, sides, 0, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, {}, friction, physics)
 end
 
-function gameboard:addSimpleSlope(myName, behavior, color, x, y, width, count, angle, rotation, restitution, density, friction, depth)
-    self:addShape(myName, behavior, gb_shapes["shape_slope"], color, x, y, width, 0, 0, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics)
+function gameboard:addSimpleSlope       (myName, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth)
+    self:addShape(myName, behavior, gb_shapes["shape_slope"], color, x, y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics)
+end
+
+function gameboard:addSimpleCup       (myName, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth, gap_width)
+    self:addShape(myName, behavior, gb_shapes["shape_slope"], color, x-(gap_width/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics)
+    self:addShape(myName, behavior, gb_shapes["shape_slope"], color, x+(gap_width/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics) -- needs slight adjustment
 end
 
 function gameboard.draw()
@@ -268,7 +269,6 @@ function gameboard:addShape(
 end
 
 function gameboard.setupEnumerations()
-
     gb_shapes = 
     {
          shape_circle       = 1     --DONE
@@ -292,8 +292,10 @@ function gameboard.setupEnumerations()
     {
         color_maroon = {0.5, 0, 0, 1}
     }
+end
 
+function gameboard.getColors{}
+    return gb_colors
 end
 
 return gameboard
-
