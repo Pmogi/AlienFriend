@@ -2,6 +2,7 @@ local Object = require("lib/classic")
 local World = require("src/world")
 local Ball = require("src/entities/ball")
 local Token = require("src/entities/token")
+local Resource = require("src/systems/resource")
 
 local gameboard = Object:extend()
 local physics
@@ -35,50 +36,51 @@ function gameboard:new()
 
     objects["ballTest"] =  Ball(100, 100, 10, 0.50, 1, physics)
     objects["testToken"] = Token(400, 215, physics)
-    -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
+
+    --objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
+    -- self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
+    -- self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
+    -- self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
     
-    --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
-    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
-    --self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
-    --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-    --                gb_colors["color_maroon"], 200, 300,
-    --                200, 30, -1,
-    --                -1, 3, 1,
-    --                0.50, true, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
---
-    --self:addShape(  "test2", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-    --                gb_colors["color_maroon"], 100, 100,
-    --                200, 30, -1,
-    --                -1, 3, 1,
-    --                0.50, true, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
-    --
-    --self:addShape(  "test3", gb_behaviors["behavior_kinematic"], gb_shapes["shape_circle"],
-    --                gb_colors["color_maroon"], 500, 300,
-    --                400, 80, 20,
-    --                -1, 3, 1,
-    --                0.99, true, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
-    --
-    --self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
-    --                gb_colors["color_maroon"], 500, 300,
-    --                400, 80, 20,
-    --                -1, 3, 1,
-    --                0.99, false, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
+    self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
+                    gb_colors["color_maroon"], 200, 300,
+                    200, 30, -1,
+                    -1, 3, 1,
+                    0.50, true, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
+
+    self:addShape(  "test2", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
+                    gb_colors["color_maroon"], 100, 100,
+                    200, 30, -1,
+                    -1, 3, 1,
+                    0.50, true, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
+    
+    self:addShape(  "test3", gb_behaviors["behavior_kinematic"], gb_shapes["shape_circle"],
+                    gb_colors["color_maroon"], 500, 300,
+                    400, 80, 20,
+                    -1, 3, 1,
+                    0.99, true, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
+    
+    self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
+                    gb_colors["color_maroon"], 500, 300,
+                    400, 80, 20,
+                    -1, 3, 1,
+                    0.99, false, 1,
+                    1 , false, 0,
+                    {0,0,0,1}, 2, 100,
+                    0, {}, 10,
+                    physics )
 end
 
 function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth)
@@ -307,10 +309,15 @@ end
 function beginContact(a, b, coll)
     if (a:getUserData().id == "Ball" and b:getUserData().id == "Token") then
        b:setUserData({alive = false}) 
+       print("butt")
+       Resource.addResource(1)
 
 
     elseif(b:getUserData().id == "Ball" and a:getUserData().id == "Token") then
-        a:setUserData({alive = false}) 
+        a:setUserData({alive = false})
+        Resource.addResource(1)
+        print("butt")
+ 
         
 
     end

@@ -1,6 +1,7 @@
 -- Libraries
 local Object = require("lib/classic")
 local Timer = require("lib/timer")
+local Environment = require("src/systems/environment")
 
 -- Modules
 local Assets = require("src/assets")
@@ -16,21 +17,20 @@ local slimeSprites = {
     Assets.getAsset("rSlime4"),
     Assets.getAsset("rSlime3"),
     Assets.getAsset("rSlime2"),
-    Assets.getAsset("rSlime1"),
+    Assets.getAsset("rSlime1"), 
     Assets.getAsset("rSlime0")
 }
 
 
-function Slime:new(x, y)
+
+function Slime:new(x, y, type)
     self.id = "Slime"
     self.x = x or 300
     self.y = y or 300
 
-    self.happiness = 50
+    self.happiness = 10
     self.hunger = 0
-    self.growth = 0.5
-    
-    self.type = "Water"
+    self.growth = 0
     
     self.xScale = 1
     self.yScale = 1
@@ -46,7 +46,14 @@ function Slime:new(x, y)
     self.emoteTime = 9
     self.emoteHappy = false
     self.emoteSad = false
+
+    -- What the slime likes depends on it's type
+    self.type = type
     
+
+    self.likesGravity = nil
+    self:assignLikes()
+
     
     -- Blink logic with timers
     Timer.every(self.blinkTimeStep, 
@@ -54,6 +61,8 @@ function Slime:new(x, y)
                     
                     if (self.blink == true) then
                         self.spriteSelection = (self.spriteSelection + 1) % 9
+                        
+                        -- reset the blink state and return to staring sprite
                         if self.spriteSelection == 0 then
                             self.spriteSelection = 1
                             self.blink = false
@@ -92,18 +101,48 @@ function Slime:new(x, y)
     )
 end
 
+-- called to assign likes according to type
+function Slime:assignLikes()
+    local likeCheck = math.random(0, 1)
+
+    if (likeCheck == 1) then
+        self.likesGravity = 1
+    else
+        self.likesGravity = 0
+    end
+end
+
 function Slime:update(dt)
-    self:incHunger(dt) 
+    self:incHunger(dt)
+    self:incHappiness(dt)
+ 
 end
 
 -- function for increasing hunger over time
 function Slime:incHunger(dt) 
-    self.hunger = self.hunger + dt/10
+    self.hunger = self.hunger + dt
 end
 
 function Slime:incHappiness(dt)
-    self.happiness = self.happiness + 
+    -- Inc or dec happiness based on hunger
+    if (self.hunger > 40) then
+        self.happiness = math.max( 0, self.happiness - self.hunger*1/20*dt)
+    else
+        self.happiness = math.max( 0, self.happiness + self.hunger*1/20*dt)
+    end
+    
+    local heat, humidity, gravity = Environment.returnEnvStats()
+
+    -- inc or dec happiness based on environment, type and randomness in gravity
+    if (self.type == "Water") then
+        self.happiness = self.happiness + (-heat*0.4 + humidity*0.4 + self.likesGravity*0.2)*dt/5
+    
+    elseif(self.type == "Fire") then
+        self.happiness = self.happiness + (heat*0.4 - humidity*0.4 + self.likesGravity*0.2)*dt/5
+    end
 end
+
+
 
 function Slime:returnStats()
     return self.happiness, self.hunger, self.growth

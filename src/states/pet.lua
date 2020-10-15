@@ -1,5 +1,6 @@
 local Slime = require("src/entities/slime")
 local Assets = require("src/assets")
+local Resource = require("src/systems/resource")
 
 local Pet = {}
 
@@ -19,6 +20,9 @@ function Pet.draw()
     love.graphics.print( "Happiness: " ..  happy .. 
                          "\nHunger: " .. hungry ..
                         '\nGrowth: ' .. growth)
+
+    local rescString = string.format( "Credits: %d Antimatter: %d AC Units: %d Slime Feed: %d ",  Resource.returnResource())    
+    love.graphics.print(rescString, 300)
     slime:draw()
 end
 

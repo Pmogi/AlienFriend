@@ -1,3 +1,5 @@
+local Resource = require("src/systems/resource")
+
 local Environment = {}
 
 local maxValue = 100
@@ -8,20 +10,20 @@ local gravity = 50
 
 
 -- x is a positive or negative value
-local Environment.modifyHeat(x)
+function Environment.modifyHeat(x)
     heat = heat + x
 end
 
-local Environment.modifyHumidity(x)
-    heat = heat + x
+function Environment.modifyHumidity(x)
+    humidity = humidity + x
 end
 
 -- pass in the slime and modify it's behavior based on the environment
-local Environment.environmentToSlime(slime)
+function Environment.environmentToSlime(slime)
 
 end
 
-local Environment.returnEnvStats()
+function Environment.returnEnvStats()
     return heat, humidity, gravity
 end
 
