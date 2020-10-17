@@ -16,7 +16,7 @@ function Token:new(x, y, world)
 
     -- physics, body, shape, fixture
     self.body = love.physics.newBody(world, self.x, self.y, "static")
-    self.shape = love.physics.newCircleShape(10) -- radius of 10 pixels
+    self.shape = love.physics.newCircleShape(15) -- radius of 10 pixels
     self.fixture = love.physics.newFixture(self.body, self.shape, self.density) -- 
 
     self.fixture:setSensor(true)

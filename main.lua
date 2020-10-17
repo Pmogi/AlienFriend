@@ -53,10 +53,11 @@ function love.update(dt)
 
     if (gameState == PlayGame) then
         Game.update(dt)
-    
-    elseif (gameState == SlimeScreen) then
-        Pet.update(dt)
     end
+    
+    -- elseif (gameState == SlimeScreen) then
+        Pet.update(dt)
+    
 end
 
 function switchState() 

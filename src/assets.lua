@@ -19,6 +19,7 @@ assets["rSlime4"] = love.graphics.newImage("assets/fireSlime/fireSlime0004.png")
 -- Emotion Bubbles
 assets["happyEmote"] = love.graphics.newImage("Assets/speechBubbleHeart1.png")
 assets["sadEmote"] = love.graphics.newImage("Assets/speechBubbleUnhappy1.png")
+assets["middleEmote"] = love.graphics.newImage("Assets/speechBubbleMiddleMood0000.png")
 
 assets["token"] = love.graphics.newImage("Assets/pickUpToken.png")
 
