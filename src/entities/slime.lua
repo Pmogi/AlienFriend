@@ -129,7 +129,11 @@ function Slime:incHunger(dt)
 end
 
 function Slime:incScale()
-    self.growth = (self.happiness/100)-0.2
+    self.growth = (self.happiness/100)- 0.2
+end
+
+function Slime:feed()
+    self.hunger = self.hunger - 50
 end
 
 function Slime:incHappiness(dt)
