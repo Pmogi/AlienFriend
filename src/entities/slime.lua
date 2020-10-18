@@ -126,6 +126,8 @@ end
 -- linear function for increasing hunger over time
 function Slime:incHunger(dt) 
     self.hunger = math.min(self.hunger + dt/5, 100)
+    self.hunger = math.max(self.hunger + dt/5, 0)
+
 end
 
 function Slime:incScale()

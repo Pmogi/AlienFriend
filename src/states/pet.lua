@@ -15,12 +15,19 @@ local Pet = {}
 
 local slime = Slime(300, 550, "Water")
 
-function Pet.new()
 
+function Pet.new()
+    local move = math.random(-30, 30)*2 + slime.x
+    Timer.every(3, 
+    function() 
+        
+        Timer.tween(4, slime, {x = move}, 'in-out-quad')
+
+    end)
 end
 
 function Pet.draw()
-    love.graphics.draw(Assets.getAsset("ocean"), 20, -50, 0)
+    love.graphics.draw(Assets.getAsset("ocean"), 0, -50, 0)
     
     --Draw the slime
     slime:draw()
@@ -34,9 +41,9 @@ function Pet.draw()
     local happy, hungry, growth = slime:returnStats()
     local heat, humidity, gravity = Environment.returnEnvStats()
 
-    local statString = string.format("Happiness: %2.2f, Hunger: %2.2f, Growth: %2.2f", happy, hungry, growth)
-    local rescString = string.format( "Credits: %d Antimatter: %d AC Units: %d Slime Feed: %d ",  Resource.returnResource())    
-    local envString  = string.format( "%2.2f C, %2.2f%% Humidity, %2.2f N", heat*2.6, humidity/10, gravity/10)
+    local statString = string.format("Happiness: %2.2f,   Hunger: %2.2f,    Growth: %2.2f", happy, hungry, growth)
+    local rescString = string.format( "Credits: %d     Antimatter: %d     AC Units: %d    Slime Feed: %d ",  Resource.returnResource())    
+    local envString  = string.format( "%2.2f°C     %2.2f%% Humidity      %2.2f N", heat*2.6, humidity/10, gravity/10)
 
     love.graphics.print(statString, 300, love.graphics.getHeight()-45)
     love.graphics.print(envString, 300, love.graphics.getHeight()-30)
@@ -51,10 +58,11 @@ function GUI()
     
     if suit.Button("Feed", 0, love.graphics.getHeight()-50, 50, 50).hit then
         if (food > 0) then
-            toastMessage("-1 Slime Food", 100, love.graphics.getHeight()-75, 300, 30)
+            toastMessage("-1 Slime Food", 0, love.graphics.getHeight()-75, 300, 30)
             slime:feed()
+            Resource.removeResource("Food", 1)
         else
-            toastMessage("No food D:", 100, love.graphics.getHeight()-75, 300, 30)
+            toastMessage("No food D:", 0, love.graphics.getHeight()-75, 300, 30)
         end
     end
 
@@ -63,6 +71,7 @@ function GUI()
     if suit.Button("Heat +", 50, love.graphics.getHeight()-50, 50, 25).hit then
         if (ac > 0) then
             Environment.modifyHeat(10)
+            Resource.removeResource("AC", 1)
         else
             toastMessage("No AC D:", 50, love.graphics.getHeight()-75, 300, 30)
         end
@@ -71,6 +80,7 @@ function GUI()
     if suit.Button("Heat -", 50, love.graphics.getHeight()-25, 50, 25).hit then
         if (ac > 0) then
             Environment.modifyHeat(-10)
+            Resource.removeResource("AC", 1)
         else
             toastMessage("No AC D:", 50, love.graphics.getHeight()-75, 300, 30)
         end
@@ -81,6 +91,7 @@ function GUI()
     if suit.Button("Humidty +", 100, love.graphics.getHeight()-50, 75, 25).hit then
         if (ac > 0) then
             Environment.modifyHumidity(10)
+            Resource.removeResource("AC", 1)
         else
             toastMessage("No AC D:", 100, love.graphics.getHeight()-75, 300, 30)
         end
@@ -89,6 +100,7 @@ function GUI()
     if suit.Button("Humidity -", 100, love.graphics.getHeight()-25, 75, 25).hit then
         if (ac > 0) then
             Environment.modifyHumidity(-10)
+            Resource.removeResource("AC", 1)
         else
             toastMessage("No AC D:", 100, love.graphics.getHeight()-75, 300, 30)
         end
@@ -97,23 +109,22 @@ function GUI()
     
     -- Gravity Buttons
     if suit.Button("Gravity +", 175, love.graphics.getHeight()-50, 75, 25).hit then
-        if (ac > 0) then
+        if (am > 0) then
             Environment.modifyGravity(10)
+            Resource.removeResource("Antimatter", 1)
         else
             toastMessage("No Antimatter D:", 175, love.graphics.getHeight()-75, 300, 30)
         end
     end
 
     if suit.Button("Gravity -", 175, love.graphics.getHeight()-25, 75, 25).hit then
-        if (ac > 0) then
+        if (am > 0) then
             Environment.modifyGravity(-10)
+            Resource.removeResource("Antimatter", 1)
         else
             toastMessage("No Antimatter D:", 175, love.graphics.getHeight()-75, 300, 30)
         end
     end
-
-
-
 
 end
 

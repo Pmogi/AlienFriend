@@ -5,7 +5,7 @@ local Resource = {}
 local rTable = {}
 local credits
 
-
+local rMap = {["AC"] = 2, ["Antimatter"] = 1, ["Food"] = 3, ["Credits"] = credits}
 
 function Resource.init()
     rTable[1] = 0 -- Antimatter
@@ -13,6 +13,7 @@ function Resource.init()
     rTable[3] = 0 -- Slime Feed
     credits = 100 -- Credits for pachinko
 end
+
 
 function Resource.addResource(x) 
     local randomResource = math.random(1, 3)
@@ -26,7 +27,8 @@ end
 
 function Resource.removeResource(resource, x)
     assert(type(resource) == "string", "Resource: key given isn't a string") --resource needs to be a string key
-    rTable[resource] = rTable[resource] - x
+
+    rTable[rMap[resource]] = rTable[rMap[resource]] - x
 end
 
 -- for printing resource
