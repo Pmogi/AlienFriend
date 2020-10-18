@@ -52,7 +52,7 @@ function GUI()
     if suit.Button("Feed", 0, love.graphics.getHeight()-50, 50, 50).hit then
         if (food > 0) then
             toastMessage("-1 Slime Food", 100, love.graphics.getHeight()-75, 300, 30)
-            slime.feed()
+            slime:feed()
         else
             toastMessage("No food D:", 100, love.graphics.getHeight()-75, 300, 30)
         end
