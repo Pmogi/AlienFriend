@@ -13,30 +13,47 @@ local ball = 10
 local climate = "hot"
 local ids = {}
 local gb = 0
+local activated = false
 
 math.randomseed(os.time())
 
-function boardmaker:normalizeProbabilities(_probabilities)
+function boardmaker:update(dt)
+    print("+++++++++++++++++++++++++++++++++++++++++")
+    for _cx=1,721,12 do
+        local s = ""
+        for _cy=1,721,12 do
+            --print("my _x = " .. tostring(_cx))
+            --print("my _y = " .. tostring(_cy))
+            if boardmaker.checkMapPoint(1,_cx,_cy) then
+                s = (s .."X")
+            else
+                s=(s .." ")
+            end
+        end
+        print(s)
+    end
+    print("----------------------------------------")
+end
+
+function boardmaker:normalizeProbabilities(_probabilities) -- check that this is getting consistent types of input
     local sum = 0
     local probabilities = _probabilities
     for a,b in pairs(probabilities) do
         sum = sum + b[1]
     end
     for a,b in pairs(probabilities) do
-        --print(b[1])
         probabilities[b] = { (b[1] * 1/sum) , { (b[2])[1], (b[2])[1] } }
     end
     return probabilities
 end
-
 
 function boardmaker:new(_width, _height, gameboard)
     width, height = _width, _height
     gb = gameboard
     self:buildParameters()
     self:buildMap()
-    
-    self:generateRandomFeatures("random", 1000)
+    self:generateRandomFeatures("random", 60)
+    activated = true
 end
 
 function boardmaker:generateRandomFeatures(_mode, _count)
@@ -54,6 +71,7 @@ end
 --end
 
 function boardmaker:generatePiece(shape, x, y)
+    
     local   behavior, color, radius, restitution,
             density, friction, depth, gap, name
             width, height, angle, sides, count, profile = nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
@@ -65,7 +83,7 @@ function boardmaker:generatePiece(shape, x, y)
     density = p.profile[profile].density
     restitution = p.profile[profile].restitution
     friction = p.profile[profile].friction
-
+    math.randomseed(os.time())
     if p.shape[shape] then
         if p.shape[shape].radius then
             if p.shape[shape].radius.min and p.shape[shape].radius.max then
@@ -112,8 +130,7 @@ function boardmaker:generatePiece(shape, x, y)
     else return nil end
 
     local margin = p.shape.margins
-    print("shape = " .. shape .. " | " .. x .. " | " .. y)
-    --if shape == "circle" and not self:checkMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin) then
+
     if shape == "circle" and not self:checkMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin) then
         gb:addSimpleCircle(name, behavior, color, x, y, radius, restitution, density, friction, depth)
         self:setMap(x-radius-margin,y-radius-margin,x+radius+margin,y+radius+margin)
@@ -133,7 +150,6 @@ function boardmaker:generatePiece(shape, x, y)
         gb:addSimpleCup(name, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth, gap)
         self:setMap(x-width-(gap/2),y-height/2,x+width+(gap/2),y+height/2)
     end
-        
 end
 
 function boardmaker:buildParameters()
@@ -157,9 +173,9 @@ function boardmaker:buildParameters()
 
     p.behavior = {}
     p.behavior.list = {"static","kinematic","dynamic"}
-    p.behavior.circle       = {1.00,0.00,0.00}
+    p.behavior.circle       = {0.00,0.00,0.00}
     p.behavior.rectangle    = {0.50,0.50,0.00}
-    p.behavior.spokes       = {0.25,0.75,0.00}
+    p.behavior.spokes       = {9.25,0.75,0.00}
     p.behavior.regular      = {0.33,0.67,0.00}
     p.behavior.slope        = {0.92,0.08,0.00}
     p.behavior.cup          = {0.98,0.02,0.00}
@@ -285,10 +301,6 @@ function boardmaker:buildParameters()
     for a,b in pairs(p.profile.list) do
         p.profile[b[2]] = {}
     end
-
-    --for a,b in pairs(p.profile.list) do
-    --    print(a .. " ||| " .. tostring((b[2])[1]))
-    --end
     
     p.profile.  normal      .   density     = 1
     p.profile.  bouncy      .   density     = 2
@@ -344,11 +356,13 @@ function boardmaker:selectFromOdds(probabilities_table)
     return (probabilities_table[selection])[2]
 end
 
-function boardmaker:checkMap(x,y)
-    return map[(x*width)+y+1]
+function boardmaker:checkMapPoint(cx,cy,cz)
+    --print("MP | [CX] " .. tostring(cx) .. " | [CY] " .. tostring(cy))
+    --print(width)
+    return map[(tonumber(cx)*width)+tonumber(cy)+1]
 end
 
-function boardmaker:checkMap(x1,y1, x2, y2)
+function boardmaker:checkMap(x1,y1,x2,y2) -- checks if all map locations in range are empty (false). false = empty, true = occupied
     local f = false
     for x=x1,x2,1 do
         for y=y1,y2,1 do
@@ -362,7 +376,7 @@ function boardmaker:setMap(x,y)
     map[(x*width)+y+1] = true
 end
 
-function boardmaker:setMap(x1,y1,x2,y2)
+function boardmaker:setMap(x1,y1,x2,y2) -- sets all locations in range to true (occupied)
     for x=x1,x2,1 do
         for y=y1,y2,1 do
             map[(x*width)+y+1] = true
@@ -408,5 +422,5 @@ function boardmaker:popID(shape)
         return (ids[shape]-1)
     else return 0 end
 end
-
+print("I am " .. type(boardmaker))
 return boardmaker

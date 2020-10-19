@@ -9,9 +9,7 @@ local gameBoard
 
 function Game.new()
     gameBoard = GameBoard()
-    boardMaker = Boardmaker(720,720,gameBoard)
-    
-
+    --boardMaker = Boardmaker(720,720,gameBoard)
 end
 
 function Game.draw()
@@ -20,6 +18,7 @@ end
 
 function Game.update(dt)
     gameBoard.update(dt)
+    --boardMaker.update(dt)
 end
 
 

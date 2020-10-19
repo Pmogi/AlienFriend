@@ -2,17 +2,15 @@ local Object = require("lib/classic")
 local World = require("src/world")
 local Ball = require("src/entities/ball")
 local Token = require("src/entities/token")
-
 local gameboard = Object:extend()
 local physics
-local objects = {} -- physics to hold all our physical objects
---local objectLog = {}
 local drawOrder = {}
-
 local _meter                = 32
 local _gravity_constant     = 9.81
 local _gravity_factor_x     = 0
 local _gravity_factor_y     = 1
+local objects = {} -- physics to hold all our physical objects
+--local objectLog = {}
 
 local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
                 , _meter * _gravity_constant * _gravity_factor_y
@@ -35,50 +33,16 @@ function gameboard:new()
 
     objects["ballTest"] =  Ball(100, 100, 10, 0.50, 1, physics)
     objects["testToken"] = Token(400, 215, physics)
-    -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
-    
-    --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
-    --self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
-    --self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
-    --self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-    --                gb_colors["color_maroon"], 200, 300,
-    --                200, 30, -1,
-    --                -1, 3, 1,
-    --                0.50, true, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
---
-    --self:addShape(  "test2", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-    --                gb_colors["color_maroon"], 100, 100,
-    --                200, 30, -1,
-    --                -1, 3, 1,
-    --                0.50, true, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
-    --
-    --self:addShape(  "test3", gb_behaviors["behavior_kinematic"], gb_shapes["shape_circle"],
-    --                gb_colors["color_maroon"], 500, 300,
-    --                400, 80, 20,
-    --                -1, 3, 1,
-    --                0.99, true, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
-    --
-    --self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
-    --                gb_colors["color_maroon"], 500, 300,
-    --                400, 80, 20,
-    --                -1, 3, 1,
-    --                0.99, false, 1,
-    --                1 , false, 0,
-    --                {0,0,0,1}, 2, 100,
-    --                0, {}, 10,
-    --                physics )
+
+
+end
+
+function gameboard:addSpawner(myName, x, y)
+    --Add a spawner object to the x-y location
+end
+
+function gameboard:addToken(myName, x, y)
+    --Add one or many tokens to the x-y location
 end
 
 function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth)
@@ -102,20 +66,30 @@ function gameboard:addSimpleSlope       (myName, behavior, color, x, y, width, r
 end
 
 function gameboard:addSimpleCup       (myName, behavior, color, x, y, width, radius, count, angle, rotation, restitution, density, friction, depth, gap_width)
-    self:addShape(myName, behavior, gb_shapes["shape_slope"], color, x-(gap_width/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics)
-    self:addShape(myName, behavior, gb_shapes["shape_slope"], color, x+(gap_width/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics) -- needs slight adjustment
+    if angle > 90 and angle < 270 then
+        self:addShape(myName.."_1", behavior, gb_shapes["shape_slope"], color, x-(gap_width/2)-((width*math.cos(math.rad(angle)))/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics)
+        self:addShape(myName.."_2", behavior, gb_shapes["shape_slope"], color, x+(gap_width/2)+((width*math.cos(math.rad(angle)))/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle+90, 0, friction, physics)
+    else
+        self:addShape(myName.."_1", behavior, gb_shapes["shape_slope"], color, x+(gap_width/2)+((width*math.cos(math.rad(angle)))/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle, 0, friction, physics) -- needs slight adjustment
+        self:addShape(myName.."_2", behavior, gb_shapes["shape_slope"], color, x-(gap_width/2)-((width*math.cos(math.rad(angle)))/2), y, width, 0, radius, 0, count, rotation, restitution, 0, 0, density, 0, 0, nil, 0, depth, angle-90, 0, friction, physics) -- needs slight adjustment
+    end
+        
+        
 end
 
 function gameboard.draw()
+    --print(#objects)
     for key,value in pairs(objects) do
+        
         love.graphics.setColor(objects[key].colors)
         if objects[key].shape:getType() == "polygon" then
             love.graphics.polygon("fill", objects[key].body:getWorldPoints(objects[key].shape:getPoints()))
-        
         elseif(not (value.img == nil)) then -- if it has an img, then draw using the object's draw method
             objects[key]:draw()
-
         elseif objects[key].shape:getType() == "circle" then
+            --print("color = {" .. tostring(objects[key].colors[1]) .. " , " ..  tostring(objects[key].colors[2]) .. " , " .. tostring(objects[key].colors[3]) .. " , " .. tostring(objects[key].colors[4]).."}")
+            --print("[X] " .. tostring(objects[key].body:getX()) .. " | [Y] " .. tostring(objects[key].body:getY()) .. " | [R] " .. tostring(objects[key].shape:getRadius()))
+            --print(key)
             love.graphics.circle("fill", objects[key].body:getX(), objects[key].body:getY(), objects[key].shape:getRadius())
         end
     end
@@ -219,6 +193,7 @@ function gameboard:addShape(
         self:addShape(myName, behavior, gb_shapes["shape_polygon"], color, x, y,  width, height, radius, sides, count, rotation, restitution, rounded, rounding_factor, density, magnetic, magnetic_strength, stroke, stroke_width, depth, angle, myVertices, friction, myPhysics)
 
     elseif (shape == gb_shapes["shape_spokes"]) then
+        print("got to true")
         for i=1, count, 1 do
             self:addShape((myName .. "_" .. tostring(i)), behavior, gb_shapes["shape_rectangle"], 
             color, x, y,
@@ -230,6 +205,7 @@ function gameboard:addShape(
             ((360/count)*(i-1)), vertices, friction,
             myPhysics)
         end
+        
         if true then goto continue end
 
     elseif (shape == gb_shapes["shape_cup"]) then
@@ -256,7 +232,7 @@ function gameboard:addShape(
         end
         return
     end
-
+    print("myname = " .. myName)
     objects[myName].fixture:setUserData({id = myName, alive = true})
     objects[myName].colors       = color
     objects[myName].depth        = depth
@@ -275,7 +251,7 @@ function gameboard.setupEnumerations()
     gb_shapes = 
     {
          shape_circle       = 1     --DONE
-        ,shape_cup          = 2     -- a series of pegs
+        ,shape_cup          = 2     --DONE
         ,shape_rectangle    = 3     --DONE
         ,shape_regular      = 4     --DONE
         ,shape_polygon      = 5     --DONE
