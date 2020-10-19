@@ -15,15 +15,23 @@ local Pet = {}
 
 local slime = Slime(300, 550, "Water")
 
-
 function Pet.new()
-    local move = math.random(-30, 30)*2 + slime.x
-    Timer.every(3, 
-    function() 
-        
-        Timer.tween(4, slime, {x = move}, 'in-out-quad')
+    
+    -- randomly slide the slime around
 
+    local move = math.random(-30, 30) + slime.x
+    Timer.every(1.5, 
+    function() 
+        -- if going out of bounds to the right
+        if (move > love.graphics.getWidth()) then
+            move = -100
+        elseif (move < 0) then
+            move = 100
+        end
+        Timer.tween(1, slime, {x = move}, 'in-out-quad')
     end)
+    -- end of slime slide logic
+
 end
 
 function Pet.draw()

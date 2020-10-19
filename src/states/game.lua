@@ -14,8 +14,6 @@ function Game.new()
     Resource.init()
     gameBoard = GameBoard()
     -- boardMaker = Boardmaker(720,720,gameBoard)
-    
-
 end
 
 function Game.draw()

@@ -41,46 +41,8 @@ function gameboard:new()
     -- self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
     -- self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
     -- self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
-    
-    self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-                    gb_colors["color_maroon"], 200, 300,
-                    200, 30, -1,
-                    -1, 3, 1,
-                    0.50, true, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
 
-    self:addShape(  "test2", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"],
-                    gb_colors["color_maroon"], 100, 100,
-                    200, 30, -1,
-                    -1, 3, 1,
-                    0.50, true, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
     
-    self:addShape(  "test3", gb_behaviors["behavior_kinematic"], gb_shapes["shape_circle"],
-                    gb_colors["color_maroon"], 500, 300,
-                    400, 80, 20,
-                    -1, 3, 1,
-                    0.99, true, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
-    
-    self:addShape(  "test4", gb_behaviors["behavior_kinematic"], gb_shapes["shape_rectangle"],
-                    gb_colors["color_maroon"], 500, 300,
-                    400, 80, 20,
-                    -1, 3, 1,
-                    0.99, false, 1,
-                    1 , false, 0,
-                    {0,0,0,1}, 2, 100,
-                    0, {}, 10,
-                    physics )
 end
 
 function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth)

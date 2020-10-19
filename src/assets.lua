@@ -21,14 +21,28 @@ assets["happyEmote"] = love.graphics.newImage("Assets/speechBubbleHeart1.png")
 assets["sadEmote"] = love.graphics.newImage("Assets/speechBubbleUnhappy1.png")
 assets["middleEmote"] = love.graphics.newImage("Assets/speechBubbleMiddleMood0000.png")
 
+-- Tokens
 assets["token"] = love.graphics.newImage("Assets/pickUpToken.png")
 
+-- Heart for particle effects
+assets["heart"] = love.graphics.newImage("Assets/Heart1.png")
+
 -- BG Slime
-assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
+-- assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
 assets["ocean"] = love.graphics.newImage("assets/OceanExtended.png")
 
 function Assets.getAsset(key)
     return assets[key]
+end
+
+
+-- For loading the assets of the blue or red slime
+function Assets.loadBlueSlime()
+
+end
+
+function Assets.loadRedSlime()
+
 end
 
 return Assets

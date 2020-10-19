@@ -21,7 +21,8 @@ local slimeSprites = {
     Assets.getAsset("rSlime0")
 }
 
-
+local particleHeart = Assets.getAsset("heart")
+local particleEffect -- set in slime:new()
 
 function Slime:new(x, y, type)
     self.id = "Slime"
@@ -35,10 +36,13 @@ function Slime:new(x, y, type)
     self.xScale = 1
     self.yScale = 1
 
+    -- select which image of thes slime to draw
     self.spriteSelection = 1
     self.img = slimeSprites[self.spriteSelection]
+
+    -- Blinking logic
     self.blinkTime = 4 -- every 5 seconds randomly decide to blink
-    self.blinkTimeStep = 0.1 -- every .1 second iterate through a frame
+    self.blinkTimeStep = 0.1 -- every .1 second iterate through a frame of the blink
     self.blink = false
     
     -- Variables for random emoting to player
@@ -51,7 +55,10 @@ function Slime:new(x, y, type)
     -- What the slime likes depends on it's type
     self.type = type
     
+    -- Timer value on petting slime
+    self.canPet = true
 
+    -- gravity liking or disliking is randomly set
     self.likesGravity = nil
     self:assignLikes()
 
@@ -74,7 +81,7 @@ function Slime:new(x, y, type)
                 end
     )
     
-    -- Randomly decide to blink every 5 seconds 
+    -- Randomly decide to blink or emote every 5 seconds 
     Timer.every(self.blinkTime,
         function()
             
@@ -82,12 +89,12 @@ function Slime:new(x, y, type)
                 local blink = math.random( 0, 1)
                 local emote = math.random( 0, 1)
                 if (blink == 1) then self.blink = true end
-                if (blink == 1) then self.emote = true end
+                if (emote == 1) then self.emote = true end
             end
         end)
     -- end of blink logic
 
-
+    -- Choose the emote based on happiness value
     Timer.every(self.emoteTime, 
     function ()
         if (self.emote == true) then
@@ -103,6 +110,22 @@ function Slime:new(x, y, type)
         end
     end
     )
+
+
+    -- set up particle system
+    particleEffect = love.graphics.newParticleSystem(particleHeart, 20)
+    particleEffect:setParticleLifetime(0.9)
+    particleEffect:setEmissionRate(8)
+    particleEffect:setSizes(1)
+    particleEffect:setRotation(0, math.pi/4)
+    particleEffect:setPosition(self.x, self.y-10)
+    particleEffect:setSpeed(100, 100)
+    particleEffect:setDirection(-math.pi/2)
+    particleEffect:setSpread(math.pi/8)
+    particleEffect:pause()
+
+    particleEffect:setColors(255, 255, 255, 200,  255, 0, 0, 150,   0, 0, 0 ,0) -- fade out
+    
 end
 
 -- called to assign likes according to type
@@ -120,6 +143,8 @@ function Slime:update(dt)
     self:incHunger(dt)
     self:incHappiness(dt)
     self:incScale()
+    self:checkPet()
+    particleEffect:update(dt)
  
 end
 
@@ -131,13 +156,15 @@ function Slime:incHunger(dt)
 end
 
 function Slime:incScale()
-    self.growth = (self.happiness/100)- 0.2
+    self.growth = (self.happiness/100)-0.2
 end
 
 function Slime:feed()
     self.hunger = self.hunger - 50
 end
 
+
+-- increment the happiness of the slime based on hunger, type, and environment
 function Slime:incHappiness(dt)
     -- Cubic function that increases or decreases happiness evening out at 50
     self.happiness = self.happiness - (((self.hunger - 50)^3/5000)*dt)/100
@@ -155,11 +182,15 @@ function Slime:incHappiness(dt)
     end
 end
 
+
+-- return stats for drawing text
 function Slime:returnStats()
     return self.happiness, self.hunger, self.growth
 end
 
+
 function Slime:draw()
+    love.graphics.draw(particleEffect)
     
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(self.img, self.x, self.y, 0, (self.xScale + self.growth), (self.yScale + self.growth), self.img:getWidth()/2, self.img:getHeight()/2)
@@ -170,13 +201,49 @@ function Slime:draw()
     
     elseif(self.emoteMiddle == true) then
         love.graphics.draw(Assets.getAsset("middleEmote"), self.x+40, self.y-40)    
+        self:emitHeart()
     
     elseif (self.emoteHappy == true) then  
         love.graphics.draw(Assets.getAsset("happyEmote"), self.x+40, self.y-40)
+        self:emitHeart()
     end
 
+    -- love.graphics.rectangle("line", self.x-self.img:getWidth()/2, self.y-self.img:getHeight()/2, self.img:getWidth(), self.img:getHeight())
+
+
+    
 end
 
 
+-- check and initiate particle drawing
+function Slime:emitHeart()
+    particleEffect:setPosition(self.x, self.y)
+    particleEffect:start()
+    Timer.after(1, function() particleEffect:pause() end)
+
+end
+
+-- essential feature of petting slime
+function Slime:checkPet()
+    
+    local xPos =  love.mouse.getX()
+    local yPos =  love.mouse.getY()
+
+    local slimeX = self.x-self.img:getWidth()/2
+    local slimeY = self.y-self.img:getHeight()/2
+
+        -- check if cursor is between slime area
+    if (xPos > slimeX and xPos < slimeX+self.img:getWidth() and
+            yPos > slimeY and yPos < slimeY + self.img:getHeight()) then
+            
+        if (self.canPet and love.mouse.isDown(1)) then
+            --emit heart
+            self.happiness = self.happiness + 0.5
+            self.canPet = false -- limit the petting
+            Timer.after(3, function() self.canPet = true end) -- reset after 3 seconds
+            self:emitHeart()
+        end        
+    end
+end
 
 return Slime
