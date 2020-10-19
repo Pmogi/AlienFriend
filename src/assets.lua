@@ -31,6 +31,10 @@ assets["heart"] = love.graphics.newImage("Assets/Heart1.png")
 -- assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
 assets["ocean"] = love.graphics.newImage("assets/OceanExtended.png")
 
+-- Audio
+assets["goodSound"] = love.audio.newSource("Assets/audio/good.ogg", "static")
+assets["badSound"]  = love.audio.newSource("Assets/audio/bad.ogg", "static")
+
 function Assets.getAsset(key)
     return assets[key]
 end

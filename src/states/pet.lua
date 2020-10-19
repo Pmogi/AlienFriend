@@ -80,8 +80,10 @@ function GUI()
         if (ac > 0) then
             Environment.modifyHeat(10)
             Resource.removeResource("AC", 1)
+            playGoodSound()
         else
             toastMessage("No AC D:", 50, love.graphics.getHeight()-75, 300, 30)
+            playBadSound()
         end
     end
 
@@ -89,8 +91,10 @@ function GUI()
         if (ac > 0) then
             Environment.modifyHeat(-10)
             Resource.removeResource("AC", 1)
+            playGoodSound()
         else
             toastMessage("No AC D:", 50, love.graphics.getHeight()-75, 300, 30)
+            playBadSound()
         end
     end
     
@@ -149,4 +153,11 @@ function Pet.update(dt)
     slime:update(dt) 
 end
 
+function playGoodSound()
+    Assets.getAsset("goodSound"):play()
+end
+
+function playBadSound()
+    Assets.getAsset("badSound"):play()
+end
 return Pet
