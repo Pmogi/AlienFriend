@@ -1,5 +1,4 @@
 local Object = require("lib/classic")
-local World = require("src/world")
 local Ball = require("src/entities/ball")
 local Token = require("src/entities/token")
 local Gameboard = require("src/gameboard")

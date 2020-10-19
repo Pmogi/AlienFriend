@@ -1,9 +1,7 @@
 -- library
 local Timer = require("lib/timer")
+local Suit  = require("lib/suit")
 
-
--- Module
-local Render = require("src/render")
 
 local Menu = {}
 local menuActive
@@ -13,21 +11,14 @@ function Menu.new()
 end
 
 function Menu.update(dt)
-    if (love.keyboard.isDown('escape')) then
-        love.event.quit()
+    if Suit.Button("Start Game", love.graphics.getWidth()/2-50, love.graphics.getHeight()/1.25, 100, 50).hit then
+        return true -- transition to slimePlay state
     end
 
-    if (love.keyboard.isDown('w') and menuActive == true) then
-        menuActive = false
-    end
-end
-
-function Menu.returnMenuActivity()
-    return menuActive
 end
 
 function Menu.draw()
-    Render.menu()
+    Suit.draw()
 end
 
 
