@@ -59,6 +59,14 @@ function gameboard:new()
     
 end
 
+function gameboard:addSpawner(myName, x, y)
+
+end
+
+function gameboard:addToken(myName, x, y)
+
+end
+
 function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth)
     self:addShape(myName, behavior, gb_shapes["shape_circle"], color, x, y, 0, 0, radius, 0, 0, 0, restitution, 0, 0, density, 0, 0, nil, 0, depth, 0, {}, friction, physics)
 end
