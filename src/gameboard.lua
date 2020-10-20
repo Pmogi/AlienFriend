@@ -1,5 +1,6 @@
 local Object = require("lib/classic")
-local Ball = require("src/entities/ball")
+--local Ball = require("src/entities/ball")
+local BallFactory = require("src/entities/ballFactory")
 local Token = require("src/entities/token")
 local Resource = require("src/systems/resource")
 
@@ -13,9 +14,14 @@ local _gravity_factor_y     = 1
 local objects = {} -- physics to hold all our physical objects
 --local objectLog = {}
 
+-- Holds all the physics bodies
 local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
                 , _meter * _gravity_constant * _gravity_factor_y
                 , true)
+
+-- Constructs balls when the area is clicked on
+local ballFactory = BallFactory(300, 125, objects, physics)
+
 
 function gameboard:getPhysics()
     return physics
@@ -32,7 +38,7 @@ function gameboard:new()
 
     physics:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
-    objects["ballTest"] =  Ball(100, 100, 10, 0.50, 1, physics)
+    
     objects["testToken"] = Token(400, 215, physics)
 
     gameboard:addSimpleRectangle("0_rectangle","static",{0,0,0,1},100,420,480,160,19,false,0,0.2,1,0.5,0)
@@ -45,11 +51,7 @@ function gameboard:new()
     gameboard:addSimpleRegular("7_regular","static",{0,0,0,1},300,450,140,3,270,0,0.2,1,0,0.5)
     gameboard:addSimpleRectangle("11_rectangle","static",{0,0,0,1},360,670,690,260,339,false,0,0.2,1,0.5,0)
     gameboard:addSimpleSlope("13_slope","static",{0,0,0,1},400,290,670,10,1,43,0,0.2,1,0.5,0)
-    gameboard:addShape("14_spokes","static",gb_shapes["shape_spokes"],{0.502,1,1,1},430,460,180,25,168,3,1,0,0.2,true,0,1,false,0,0,0,0,302,nil,0.5,physics)
-    gameboard:addShape("15_spokes","static",gb_shapes["shape_spokes"],{0.502,1,1,1},380,380,258,25,177,3,1,0,0.2,true,0,1,false,0,0,0,0,43,nil,0.5,physics)
-    gameboard:addShape("16_spokes","kinematic",gb_shapes["shape_spokes"],{0.502,1,1,1},540,70,172,25,108,3,1,0,0.2,true,0,1,false,0,0,0,0,38,nil,0.5,physics)
-    gameboard:addShape("17_spokes","kinematic",gb_shapes["shape_spokes"],{0.502,1,1,1},500,140,166,25,131,3,1,0,0.2,true,0,1,false,0,0,0,0,309,nil,0.5,physics)
-    gameboard:addShape("18_spokes","kinematic",gb_shapes["shape_spokes"],{0.502,1,1,1},460,60,226,25,158,3,1,0,0.2,true,0,1,false,0,0,0,0,44,nil,0.5,physics)
+
     
     -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
     -- self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
@@ -101,6 +103,8 @@ end
 
 function gameboard.draw()
     --print(#objects)
+
+    ballFactory:draw()
     for key,value in pairs(objects) do
         
         love.graphics.setColor(objects[key].colors)
@@ -118,6 +122,7 @@ function gameboard.draw()
 end
 
 function gameboard.update(dt)
+    ballFactory:update(dt)
     -- iterate through the bodies and delete any bodies whose's alive status is false
     for key in pairs(objects) do 
         if objects[key].fixture:getUserData().alive == false then

@@ -7,8 +7,6 @@ local Assets = require("src/assets")
 
 local Token = Object:extend()
 
-
-
 function Token:new(x, y, world)
     self.x = x 
     self.y = y
