@@ -7,10 +7,14 @@ local Assets = require("src/assets")
 
 local Token = Object:extend()
 
-function Token:new(x, y, world)
+
+
+function Token:new(x, y, type, world)
     self.x = x 
     self.y = y
-    self.img = Assets.getAsset("token")
+    if type == "AC" then self.img = Assets.getAsset("token1") end
+    if type == "antimatter" then self.img = Assets.getAsset("token2") end
+    if type == "food" then self.img = Assets.getAsset("token3") end
 
     -- physics, body, shape, fixture
     self.body = love.physics.newBody(world, self.x, self.y, "static")
@@ -31,12 +35,12 @@ function Token:new(x, y, world)
 end
 
 function Token:draw()
-    love.graphics.setColor(1, 1, 1)
     love.graphics.draw(self.img, self.body:getX(), self.body:getY())
+    love.graphics.setColor(1, 1, 1)
 end
 
 function Token:update(dt)
-    
+    self.y = self.y + 1
 end
 
 
