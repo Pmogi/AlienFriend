@@ -14,7 +14,6 @@ function Resource.init()
     credits = 100 -- Credits for pachinko
 end
 
-
 function Resource.addResource(x) 
     local randomResource = math.random(1, 3)
     print(randomResource)

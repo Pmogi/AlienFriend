@@ -1,5 +1,6 @@
 local Object = require("lib/classic")
-local Ball = require("src/entities/ball")
+--local Ball = require("src/entities/ball")
+local BallFactory = require("src/entities/ballFactory")
 local Token = require("src/entities/token")
 local Resource = require("src/systems/resource")
 
@@ -22,9 +23,14 @@ tokeninfo.nextID = 0
 local drawcycle = 0
 
 
+-- Holds all the physics bodies
 local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
                 , _meter * _gravity_constant * _gravity_factor_y
                 , true)
+
+-- Constructs balls when the area is clicked on
+local ballFactory = BallFactory(300, 125, objects, physics)
+
 
 function gameboard:getPhysics()
     return physics
@@ -120,6 +126,9 @@ function gameboard:addSimpleCup       (myName, behavior, color, x, y, width, rad
 end
 
 function gameboard.draw()
+    --print(#objects)
+
+    ballFactory:draw()
     for key,value in pairs(objects) do
         print(drawcycle .. " || " .. key)
         love.graphics.setColor(objects[key].colors)
@@ -137,6 +146,7 @@ end
 
 function gameboard.update(dt)
     drawcycle = drawcycle+1
+    ballFactory:update(dt)
     -- iterate through the bodies and delete any bodies whose's alive status is false
     for key,obj in pairs(objects) do
         if obj.fixture:getUserData().alive == false then
