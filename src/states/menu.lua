@@ -11,10 +11,10 @@ function Menu.new()
 end
 
 function Menu.update(dt)
+    -- transition to slimePlay state
     if Suit.Button("Start Game", love.graphics.getWidth()/2-50, love.graphics.getHeight()/1.25, 100, 50).hit then
-        return true -- transition to slimePlay state
+        return true 
     end
-
 end
 
 function Menu.draw()

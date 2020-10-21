@@ -102,9 +102,10 @@ function gameboard:addSimpleCup       (myName, behavior, color, x, y, width, rad
 end
 
 function gameboard.draw()
-    --print(#objects)
 
-    ballFactory:draw()
+    ballFactory:draw() -- add to object list to call methods
+    
+    
     for key,value in pairs(objects) do
         
         love.graphics.setColor(objects[key].colors)
