@@ -40,7 +40,7 @@ function Token:draw()
 end
 
 function Token:update(dt)
-
+    self.y = self.y + 1
 end
 
 

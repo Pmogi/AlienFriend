@@ -20,6 +20,7 @@ function Ball:new(x, y, density, restitution, friction, world)
     self.body = love.physics.newBody(world, self.x, self.y, "dynamic")
     self.shape = love.physics.newCircleShape(10) -- radius of 10 pixels
     self.fixture = love.physics.newFixture(self.body, self.shape, self.density) -- 
+    --self.fixture:setGroupIndex(-2)
     
     self.depth = -1
     self.colors = {0.5, 0.5, 0.5}
