@@ -22,7 +22,9 @@ assets["sadEmote"] = love.graphics.newImage("Assets/speechBubbleUnhappy1.png")
 assets["middleEmote"] = love.graphics.newImage("Assets/speechBubbleMiddleMood0000.png")
 
 -- Tokens
-assets["token"] = love.graphics.newImage("Assets/pickUpToken.png")
+assets["token1"] = love.graphics.newImage("Assets/pickUpToken.png")
+assets["token2"] = love.graphics.newImage("Assets/pickUpTokenAlt1.png")
+assets["token3"] = love.graphics.newImage("Assets/pickUpTokenAlt2.png")
 
 -- Heart for particle effects
 assets["heart"] = love.graphics.newImage("Assets/Heart1.png")

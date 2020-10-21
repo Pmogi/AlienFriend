@@ -13,6 +13,13 @@ local _gravity_factor_y     = 1
 local objects = {} -- physics to hold all our physical objects
 --local objectLog = {}
 
+local tokeninfo = {}
+tokeninfo.types = { "AC", "antimatter", "food", "credits"}
+tokeninfo.odds = {0.333, 0.333, 0.334, 0.0}
+tokeninfo.maxs = {10, 1, 10, 10}
+tokeninfo.nextID = 0
+
+
 local physics = love.physics.newWorld(  _meter * _gravity_constant * _gravity_factor_x
                 , _meter * _gravity_constant * _gravity_factor_y
                 , true)
@@ -33,29 +40,25 @@ function gameboard:new()
     physics:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     objects["ballTest"] =  Ball(100, 100, 10, 0.50, 1, physics)
-    objects["testToken"] = Token(400, 215, physics)
+    objects["testToken"] = Token(400, 215, "", physics)
 
-    gameboard:addSimpleRectangle("0_rectangle","static",{0,0,0,1},100,420,480,160,19,false,0,0.2,1,0.5,0)
-    gameboard:addSimpleRectangle("1_rectangle","static",{0,0,0,1},230,610,230,210,317,false,0,0.2,1,0.5,0)
-    gameboard:addSimpleRegular("2_regular","static",{0,0,0,1},220,340,160,3,316,0,0.2,1,0,0.5)
-    gameboard:addSimpleRegular("3_regular","static",{0,0,0,1},170,190,100,3,314,0,0.2,1,0,0.5)
-    gameboard:addSimpleRegular("4_regular","static",{0,0,0,1},140,100,70,3,324,0,0.2,1,0,0.5)
-    gameboard:addSimpleRegular("5_regular","static",{0,0,0,1},290,150,50,3,76,0,0.2,1,0,0.5)
-    gameboard:addSimpleRegular("6_regular","static",{0,0,0,1},260,190,90,3,93,0,0.2,1,0,0.5)
-    gameboard:addSimpleRegular("7_regular","static",{0,0,0,1},300,450,140,3,270,0,0.2,1,0,0.5)
-    gameboard:addSimpleRectangle("11_rectangle","static",{0,0,0,1},360,670,690,260,339,false,0,0.2,1,0.5,0)
-    gameboard:addSimpleSlope("13_slope","static",{0,0,0,1},400,290,670,10,1,43,0,0.2,1,0.5,0)
-    gameboard:addShape("14_spokes","static",gb_shapes["shape_spokes"],{0.502,1,1,1},430,460,180,25,168,3,1,0,0.2,true,0,1,false,0,0,0,0,302,nil,0.5,physics)
-    gameboard:addShape("15_spokes","static",gb_shapes["shape_spokes"],{0.502,1,1,1},380,380,258,25,177,3,1,0,0.2,true,0,1,false,0,0,0,0,43,nil,0.5,physics)
-    gameboard:addShape("16_spokes","kinematic",gb_shapes["shape_spokes"],{0.502,1,1,1},540,70,172,25,108,3,1,0,0.2,true,0,1,false,0,0,0,0,38,nil,0.5,physics)
-    gameboard:addShape("17_spokes","kinematic",gb_shapes["shape_spokes"],{0.502,1,1,1},500,140,166,25,131,3,1,0,0.2,true,0,1,false,0,0,0,0,309,nil,0.5,physics)
-    gameboard:addShape("18_spokes","kinematic",gb_shapes["shape_spokes"],{0.502,1,1,1},460,60,226,25,158,3,1,0,0.2,true,0,1,false,0,0,0,0,44,nil,0.5,physics)
+
+    gameboard:addToken("0_token",518,285)
+    gameboard:addToken("1_token",336,365)
+    gameboard:addToken("2_token",280,358)
+    gameboard:addToken("3_token",272,233)
+    gameboard:addToken("4_token",330,204)
+    gameboard:addToken("5_token",450,446)
+    gameboard:addToken("6_token",389,499)
+    gameboard:addToken("7_token",298,510)
+    gameboard:addToken("8_token",193,568)
+    gameboard:addToken("9_token",258,637)
+    gameboard:addToken("10_token",421,655)
+    gameboard:addToken("11_token",532,610)
+    gameboard:addToken("12_token",591,570)
+    gameboard:addToken("13_token",577,437)
+    gameboard:addToken("14_token",574,424)
     
-    -- objects.ballTest2   =  Ball(300, 400, 10, 0.5, physics)
-    -- self:addShape(  "test", gb_behaviors["behavior_kinematic"], gb_shapes["shape_spokes"], gb_colors["color_maroon"], 300, 300, 800, 80, -1, -1, 3, 1, 0.99, true, 1, 1 , false, 0, {0,0,1,1}, 0.99, 100, 0, {}, 10, physics )
-    -- self:addShape("test", gb_behaviors["behavior_static"], gb_shapes["shape_regular"], {1,0,0,1}, 100, 100, 1,1,100, 8, 1, 0, 1, false, 0, 1, false, 0, false, 0, 0, 180,{}, 0,physics)
-    -- self:addShape("slopeTest", gb_behaviors["behavior_static"], gb_shapes["shape_slope"], gb_colors["color_maroon"], 300, 400, 600, 0, 5, 0, 30, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, physics)
-
     
 end
 
@@ -64,7 +67,32 @@ function gameboard:addSpawner(myName, x, y)
 end
 
 function gameboard:addToken(myName, x, y)
-
+    odds = {}
+    odds.flag = false
+    odds.selected = 1
+    odds.vals = {}
+    odds.vals[1] = 0
+    for t=2,#tokeninfo.odds,1 do
+        odds.vals[t] = tokeninfo.odds[(t-1)] + odds.vals[(t-1)]
+    end
+    random = math.random()
+    for i=#odds.vals,1,-1 do
+        if random > odds.vals[i] and not odds.flag then
+            odds.selected = i
+            odds.flag = true
+        end  
+    end
+    odds.count = math.ceil(math.pow(math.random(),3)*tokeninfo.maxs[odds.selected])
+    print("[TOKEN] Count = " .. odds.count .. " | Type = " .. tokeninfo.types[odds.selected])
+    if odds.count == 1 then
+        objects[(tokeninfo.nextID .. "_token")] = Token(x, y, tokeninfo.types[odds.selected], physics)
+        tokeninfo.nextID = tokeninfo.nextID + 1
+    else
+        for i=1,odds.count,1 do
+            objects[tokeninfo.nextID .. "_token"] = Token(x+math.random(-10,10), y+math.random(-10,10), tokeninfo.types[odds.selected], physics)
+            tokeninfo.nextID = tokeninfo.nextID + 1
+        end
+    end
 end
 
 function gameboard:addSimpleCircle      (myName, behavior, color, x, y, radius, restitution, density, friction, depth)
