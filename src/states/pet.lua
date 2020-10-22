@@ -106,8 +106,11 @@ function GUI()
         if (ac > 0) then
             Environment.modifyHumidity(10)
             Resource.removeResource("AC", 1)
+            playGoodSound()
         else
             toastMessage("No AC D:", 100, love.graphics.getHeight()-75, 300, 30)
+            playBadSound()
+
         end
     end
 
@@ -115,8 +118,11 @@ function GUI()
         if (ac > 0) then
             Environment.modifyHumidity(-10)
             Resource.removeResource("AC", 1)
+            playGoodSound()
         else
             toastMessage("No AC D:", 100, love.graphics.getHeight()-75, 300, 30)
+            playBadSound()
+
         end
     end
 
@@ -126,8 +132,11 @@ function GUI()
         if (am > 0) then
             Environment.modifyGravity(10)
             Resource.removeResource("Antimatter", 1)
+            playGoodSound()
         else
             toastMessage("No Antimatter D:", 175, love.graphics.getHeight()-75, 300, 30)
+            playBadSound()
+
         end
     end
 
@@ -135,8 +144,11 @@ function GUI()
         if (am > 0) then
             Environment.modifyGravity(-10)
             Resource.removeResource("Antimatter", 1)
+            playGoodSound()
         else
             toastMessage("No Antimatter D:", 175, love.graphics.getHeight()-75, 300, 30)
+            playBadSound()
+
         end
     end
 
