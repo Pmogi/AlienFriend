@@ -69,8 +69,10 @@ function GUI()
             toastMessage("-1 Slime Food", 0, love.graphics.getHeight()-75, 300, 30)
             slime:feed()
             Resource.removeResource("Food", 1)
+            playGoodSound()
         else
             toastMessage("No food D:", 0, love.graphics.getHeight()-75, 300, 30)
+            playBadSound()
         end
     end
 

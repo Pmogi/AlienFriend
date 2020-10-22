@@ -36,6 +36,9 @@ assets["ocean"] = love.graphics.newImage("assets/OceanExtended.png")
 -- Audio
 assets["goodSound"] = love.audio.newSource("Assets/audio/good.ogg", "static")
 assets["badSound"]  = love.audio.newSource("Assets/audio/bad.ogg", "static")
+assets["bgm"] = love.audio.newSource("Assets/audio/DOSY.ogg", "static")
+assets["bgm"]:setVolume(0.3)
+assets["bgm"]:setLooping(true)
 
 function Assets.getAsset(key)
     return assets[key]

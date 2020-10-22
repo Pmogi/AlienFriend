@@ -5,6 +5,7 @@ local Timer = require("lib/timer")
 local Menu = require("src/states/menu")
 local Game = require("src/states/game")
 local Pet  = require("src/states/pet")
+local Assets = require("src/assets")
 
 -- local Board = require("src/gameboard")
 
@@ -30,6 +31,11 @@ function love.load()
     gameState = PlayMenu
     canSwitch = true
     math.randomseed(os.time())
+
+    
+    
+    Assets.getAsset("bgm"):play()
+
 
 end
 
