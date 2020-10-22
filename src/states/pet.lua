@@ -23,7 +23,7 @@ function Pet.new()
     Timer.every(1.5, 
     function() 
         -- if going out of bounds to the right
-        if (move > 97+512) then
+        if (move > 609) then
             move = -100
         elseif (move < 97) then
             move = 100
@@ -39,7 +39,6 @@ function Pet.draw()
     
     --Draw the slime
     slime:draw()
-    
 
     love.graphics.setColor(0, 0, 0)
     love.graphics.rectangle("fill", 0, love.graphics.getHeight()-50, love.graphics.getWidth(), 50)

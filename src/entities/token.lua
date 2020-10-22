@@ -1,6 +1,5 @@
 -- Libraries
 local Object = require("lib/classic")
-local Timer = require("lib/timer")
 
 -- Modules
 local Assets = require("src/assets")
@@ -18,9 +17,7 @@ function token:new(creator, index, x, y, type)
     self.y = y
     self.w = 80
     self.h = 80
-    speedGoal = math.random(3, 4.5)
-    self.speed = 2.5
-    Timer.tween(2, self, {speed = speedGoal}, 'in-out-expo')
+    self.speed = math.random(5, 10 )
     self.gravity = 0.18
     self.gravity_max = 0
     self.status = true
@@ -60,6 +57,11 @@ function token:update(dt)
             self.status = false
             return
         end
+    end
+
+    if (self.y > 600) then
+        self.status = false
+        return
     end
 
     self.speed = math.min(self.speed + self.gravity, self.gravity_max)

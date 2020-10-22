@@ -33,7 +33,7 @@ function tokenmaker:Initialize()
     tokens[a].name = "AC"
     tokens[b].name = "Food"
     tokens[c].name = "Antimatter"
-    tokens[a].quad = {0.5,0.5,0.005,0.000012,0}
+    tokens[a].quad = {0.5, 0.5, 0.005, 0.000012, 0}
     tokens[b].quad = {3,3,0.002,0.000001,0}
     tokens[c].quad = {0.1,0.2,0.002,0.000001,0.00000015}
     tokens[a].variance = {  0.2,  0.2,  0.2 }
@@ -55,7 +55,7 @@ function tokenmaker:update(dt)
             tokens.clock[a] = (quotient/q) * r
             -- spawn token
             tokens.counter = tokens.counter + 1
-            tokens.tokens["token_" .. tokens.counter] = Token(self, "token_" .. tokens.counter, math.random(playfield.w-16)+playfield.x+8,  playfield.y  ,  tokens[b].name )
+            tokens.tokens["token_" .. tokens.counter] = Token(self, "token_" .. tokens.counter, math.random(0, playfield.w + playfield.x),  playfield.y  ,  tokens[b].name )
         else
         tokens.clock[a] = tokens.clock[a] - detractment
         end

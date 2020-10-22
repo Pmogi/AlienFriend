@@ -30,7 +30,7 @@ assets["token3"] = love.graphics.newImage("Assets/pickUpTokenAlt2.png")
 assets["heart"] = love.graphics.newImage("Assets/Heart1.png")
 
 -- BG Slime
--- assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
+assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
 -- assets["ocean"] = love.graphics.newImage("assets/OceanExtended.png")
 assets["bg"] = love.graphics.newImage("assets/bg.png")
 

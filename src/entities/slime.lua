@@ -150,24 +150,24 @@ end
 
 -- linear function for increasing hunger over time
 function Slime:incHunger(dt) 
-    self.hunger = math.min(self.hunger + dt/5, 100)
+    self.hunger = math.min(self.hunger + dt/2, 100)
     self.hunger = math.max(self.hunger + dt/5, 0)
 
 end
 
 function Slime:incScale()
-    self.growth = (self.happiness/100)-0.2
+    self.growth = (self.happiness/100)-0.3
 end
 
 function Slime:feed()
-    self.hunger = self.hunger - 10
+    self.hunger = self.hunger - 5
 end
 
 
 -- increment the happiness of the slime based on hunger, type, and environment
 function Slime:incHappiness(dt)
     -- Cubic function that increases or decreases happiness evening out at 50
-    self.happiness = self.happiness - (((self.hunger - 50)^3/5000)*dt)/100
+    self.happiness = self.happiness - (((self.hunger - 50)^3/5000)*dt)/300
     self.happiness = math.min(self.happiness, 100)
     self.happiness = math.max(self.happiness, 0)
     
@@ -175,10 +175,10 @@ function Slime:incHappiness(dt)
 
     -- inc or dec happiness based on environment, type and randomness in gravity
     if (self.type == "Water") then
-        self.happiness = self.happiness + (-heat*0.4 + humidity*0.4 + self.likesGravity*0.2)*dt/20
+        self.happiness = self.happiness + (-heat*0.2 + humidity*0.05 + self.likesGravity*0.2)*dt/30
     
     elseif(self.type == "Fire") then
-        self.happiness = self.happiness + (heat*0.4 - humidity*0.4 + self.likesGravity*0.2)*dt/20
+        self.happiness = self.happiness + (heat*0.05 - humidity*0.2 + self.likesGravity*0.2)*dt/30
     end
 end
 
@@ -192,8 +192,13 @@ end
 function Slime:draw()
     love.graphics.draw(particleEffect)
     
+    -- shadow
+    love.graphics.setColor(0.5, 0.5, 0.5)
+    love.graphics.ellipse("fill", self.x, self.y+25, 25*5*self.growth, 5)
+
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(self.img, self.x, self.y, 0, (self.xScale + self.growth), (self.yScale + self.growth), self.img:getWidth()/2, self.img:getHeight()/2)
+    
     
     -- check if an emote is to be drawn
     if (self.emoteSad == true) then
@@ -207,6 +212,9 @@ function Slime:draw()
         love.graphics.draw(Assets.getAsset("happyEmote"), self.x+40, self.y-40)
         self:emitHeart()
     end
+
+
+    
 
     -- love.graphics.rectangle("line", self.x-self.img:getWidth()/2, self.y-self.img:getHeight()/2, self.img:getWidth(), self.img:getHeight())
 
