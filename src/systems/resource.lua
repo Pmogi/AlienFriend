@@ -20,6 +20,10 @@ function Resource.addResource(x)
     rTable[randomResource] = rTable[randomResource] + x
 end
 
+function Resource.addResourceByType(type)
+        rTable[rMap[type]] = rTable[rMap[type]] + 1
+end
+
 function Resource.addCredits(x)
     credits = credits + x 
 end
