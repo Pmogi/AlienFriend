@@ -18,8 +18,6 @@ function BallFactory:new(x, y, objectsList, world)
     self.world = world
     self.objectsList = objectsList
 
-    print(self.world)
-
     self.depth = 100 -- low priority
 end
 
@@ -43,8 +41,6 @@ function BallFactory:draw()
     love.graphics.setColor(0.5, 0.5, 0.5)
     love.graphics.rectangle("fill", self.x, self.y, self.w, self.h )
     love.graphics.setColor(1, 1, 1)
-
-
 end
 
 function BallFactory:spawnBall()
