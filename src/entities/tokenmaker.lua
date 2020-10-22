@@ -65,7 +65,6 @@ function tokenmaker:update(dt)
         if b:getStatus() == false then tokens.tokens[a] = nil else b:update(dt) end
     end
 
-
     index = index + increment
 end
 

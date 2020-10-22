@@ -9,7 +9,7 @@ assets["slime2"] = love.graphics.newImage("assets/slime/slime0002.png")
 assets["slime3"] = love.graphics.newImage("assets/slime/slime0003.png")
 assets["slime4"] = love.graphics.newImage("assets/slime/slime0004.png")
 
--- red slime
+-- Red Slime
 assets["rSlime0"] = love.graphics.newImage("assets/fireSlime/fireSlime0000.png")
 assets["rSlime1"] = love.graphics.newImage("assets/fireSlime/fireSlime0001.png")
 assets["rSlime2"] = love.graphics.newImage("assets/fireSlime/fireSlime0002.png")
@@ -31,7 +31,8 @@ assets["heart"] = love.graphics.newImage("Assets/Heart1.png")
 
 -- BG Slime
 -- assets["gridBG"] = love.graphics.newImage("assets/grid_bg.png")
-assets["ocean"] = love.graphics.newImage("assets/OceanExtended.png")
+-- assets["ocean"] = love.graphics.newImage("assets/OceanExtended.png")
+assets["bg"] = love.graphics.newImage("assets/bg.png")
 
 -- Audio
 assets["goodSound"] = love.audio.newSource("Assets/audio/good.ogg", "static")

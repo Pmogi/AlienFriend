@@ -13,7 +13,7 @@ local colorToast = {normal = { fg = {0, 0, 0}}}
 
 local Pet = {}
 
-local slime = Slime(300, 550, "Water")
+local slime = Slime(300, 425, "Fire")
 
 function Pet.new()
     
@@ -23,9 +23,9 @@ function Pet.new()
     Timer.every(1.5, 
     function() 
         -- if going out of bounds to the right
-        if (move > love.graphics.getWidth()) then
+        if (move > 97+512) then
             move = -100
-        elseif (move < 0) then
+        elseif (move < 97) then
             move = 100
         end
         Timer.tween(1, slime, {x = move}, 'in-out-quad')
@@ -35,7 +35,7 @@ function Pet.new()
 end
 
 function Pet.draw()
-    love.graphics.draw(Assets.getAsset("ocean"), 0, -50, 0)
+    love.graphics.draw(Assets.getAsset("bg"), 0, 0, 0)
     
     --Draw the slime
     slime:draw()

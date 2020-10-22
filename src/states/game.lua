@@ -1,8 +1,8 @@
 -- Libraries
 local Timer = require("lib/timer")
 
-local GameBoard = require("src/gameboard")
-local Boardmaker = require("src/boardmaker")
+--local GameBoard = require("src/gameboard")
+--local Boardmaker = require("src/boardmaker")
 local Resource = require("src/systems/resource")
 local TokenMaker = require("src/entities/tokenmaker")
 

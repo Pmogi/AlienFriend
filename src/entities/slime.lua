@@ -160,7 +160,7 @@ function Slime:incScale()
 end
 
 function Slime:feed()
-    self.hunger = self.hunger - 50
+    self.hunger = self.hunger - 10
 end
 
 
