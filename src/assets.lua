@@ -41,6 +41,10 @@ assets["bgm"] = love.audio.newSource("Assets/audio/DOSY.ogg", "static")
 assets["bgm"]:setVolume(0.3)
 assets["bgm"]:setLooping(true)
 
+-- Main menu
+assets["menuTitle"] = love.graphics.newImage("assets/ICASLIME.png")
+assets["menuSubtitle"] = love.graphics.newImage("assets/icabyline.png")
+
 function Assets.getAsset(key)
     return assets[key]
 end
