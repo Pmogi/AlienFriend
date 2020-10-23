@@ -49,7 +49,7 @@ assets["bgm"]:setVolume(0.4)
 
 -- Main menu
 assets["menuTitle"] = love.graphics.newImage("assets/ICASLIME.png")
-assets["menuSubtitle"] = love.graphics.newImage("assets/icabyline.png")
+assets["menuSubtitle"] = love.graphics.newImage("assets/subtitle.png")
 
 function Assets.getAsset(key)
     return assets[key]
