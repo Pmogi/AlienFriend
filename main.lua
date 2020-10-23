@@ -33,7 +33,7 @@ function love.load()
     math.randomseed(os.time())
 
     
-    
+    -- start playing the bg
     Assets.getAsset("bgm"):play()
 
 
@@ -64,18 +64,24 @@ function love.update(dt)
     end
 
     if (gameState == PlayGame) then
-        Game.update(dt)
+       -- run Game.update, and if a state switch was requested, call switch method
+        if Game.update(dt) then
+            switchState()
+       end
+
     elseif (gameState == PlayMenu) then
         local switch = Menu.update(dt)
-        
         if switch == true then
             gameState = PlaySlime
         end
     end
     
-    
+    -- run Pet if not 
     if (gameState == PlaySlime or gameState == PlayGame) then
-        Pet.update(dt)
+        -- run Game.update, and if a state switch was requested, call switch method
+        if Pet.update(dt) then
+            switchState()
+        end
     end
     
 end

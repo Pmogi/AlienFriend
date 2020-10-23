@@ -36,10 +36,16 @@ assets["bg"] = love.graphics.newImage("assets/bg.png")
 
 -- Audio
 assets["goodSound"] = love.audio.newSource("Assets/audio/good.ogg", "static")
+assets["goodSound"]:setVolume(0.5)
 assets["badSound"]  = love.audio.newSource("Assets/audio/bad.ogg", "static")
+assets["badSound"]:setVolume(0.5)
+
 assets["bgm"] = love.audio.newSource("Assets/audio/DOSY.ogg", "static")
 assets["bgm"]:setVolume(0.3)
 assets["bgm"]:setLooping(true)
+
+assets["ping"] = love.audio.newSource("Assets/audio/ping.ogg", "static")
+assets["bgm"]:setVolume(0.4)
 
 -- Main menu
 assets["menuTitle"] = love.graphics.newImage("assets/ICASLIME.png")

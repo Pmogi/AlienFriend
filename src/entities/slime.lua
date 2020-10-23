@@ -124,7 +124,7 @@ function Slime:new(x, y, type)
     particleEffect:setSpread(math.pi/8)
     particleEffect:pause()
 
-    particleEffect:setColors(255, 255, 255, 200,  255, 0, 0, 150,   0, 0, 0 ,0) -- fade out
+    particleEffect:setColors(255, 255, 255, 200,  255, 0, 0, 150,   0, 0, 0 ,0) -- fade out over time
     
 end
 

@@ -8,7 +8,6 @@ local Resource = require("src/systems/resource")
 local token = Object:extend()
 
 
-
 function token:new(creator, index, x, y, type)
     self.creator = creator
     self.index = index
@@ -55,6 +54,8 @@ function token:update(dt)
         if love.mouse.isDown(1) then
             Resource.addResourceByType(self.type)
             self.status = false
+            Assets.getAsset("ping"):play()
+
             return
         end
     end

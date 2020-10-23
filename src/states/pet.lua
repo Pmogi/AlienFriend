@@ -8,8 +8,10 @@ local Environment = require("src/systems/environment")
 local suit = require("lib/suit")
 local Timer = require("lib/timer")
 
-local colorToast = {normal = { fg = {0, 0, 0}}}
+local activeScreen
 
+-- used for coloring the text for the toast message method
+local colorToast = {normal = { fg = {0, 0, 0}}}
 
 local Pet = {}
 
