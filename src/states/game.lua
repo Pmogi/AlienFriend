@@ -12,6 +12,7 @@ local Game = {}
 -- Modules
 local gameBoard
 local tokenMaker
+local c1,c2,c3,c4
 
 function Game.new()
     Resource.init()
@@ -20,6 +21,10 @@ end
 
 function Game.draw()
     love.graphics.draw(Assets.getAsset("gridBG"), 0,0,0,720/800,720/600)
+    c1,c2,c3,c4 = love.graphics.getColor()
+    love.graphics.setColor({0.01,0.01,0.01,0.7})
+    love.graphics.rectangle("fill",0,670,720,50)
+    love.graphics.setColor(c1,c2,c3,c4)
     tokenMaker:draw()
 
     --local happy, hungry, growth = Slime:returnStats()
