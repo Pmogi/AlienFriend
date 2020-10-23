@@ -65,6 +65,10 @@ end
 function GUI()
     local credits, am, ac, food = Resource.returnResource()
     
+    if suit.Button("Gain Resources", 0, love.graphics.getHeight()-100, 100, 50).hit then
+        gameState = PlayGame
+    end
+
     if suit.Button("Feed", 0, love.graphics.getHeight()-50, 50, 50).hit then
         if (food > 0) then
             toastMessage("-1 Slime Food", 0, love.graphics.getHeight()-75, 300, 30)
@@ -126,6 +130,8 @@ function GUI()
 
         end
     end
+
+    
 
     
     -- Gravity Buttons

@@ -10,10 +10,10 @@ local Assets = require("src/assets")
 -- local Board = require("src/gameboard")
 
 
-local gameState
-local PlayGame = 0
-local PlayMenu = 1
-local PlaySlime = 2
+ gameState = nil
+ PlayGame = 0
+ PlayMenu = 1
+ PlaySlime = 2
 
 local canSwitch
 

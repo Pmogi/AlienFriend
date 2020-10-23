@@ -7,6 +7,8 @@ local Resource = require("src/systems/resource")
 local Environment = require("src/systems/environment")
 local TokenMaker = require("src/entities/tokenmaker")
 
+local Suit = require("lib/suit")
+
 
 local Game = {}
 -- Modules
@@ -32,11 +34,16 @@ function Game.draw()
     -- love.graphics.print(statString, 300, love.graphics.getHeight()-45)
     love.graphics.print(envString, 300, love.graphics.getHeight()-30)
     love.graphics.print(rescString, 300, love.graphics.getHeight()-18)
+
+    Suit.draw()
 end
 
 function Game.update(dt)
     tokenMaker:update(dt)
 
+    if Suit.Button("Go to Slime", 0, love.graphics.getHeight()-100, 100, 50).hit then
+        gameState = PlaySlime
+    end
 end
 
 
