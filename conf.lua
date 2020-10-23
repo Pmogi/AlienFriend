@@ -1,7 +1,7 @@
 function love.conf(t)
     t.identity = nil
     t.console = false
-    t.window.title = "Game"
+    t.window.title = "ICASLIME"
     t.window.icon = nil
     t.window.width = 704    
     t.window.height = 704

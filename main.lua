@@ -17,12 +17,6 @@ local Assets = require("src/assets")
 
 local canSwitch
 
-local gravityFactor = 1 -- increase or decrease gravity with this variable
-
-local world
-local objects = {}
-
-
 function love.load()
     Game.new()
     Pet.new()
