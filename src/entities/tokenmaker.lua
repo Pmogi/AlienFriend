@@ -33,9 +33,9 @@ function tokenmaker:Initialize()
     tokens[a].name = "AC"
     tokens[b].name = "Food"
     tokens[c].name = "Antimatter"
-    tokens[a].quad = {0.5, 0.5, 0.005, 0.000012, 0}
-    tokens[b].quad = {3,3,0.002,0.000001,0}
-    tokens[c].quad = {0.1,0.2,0.002,0.000001,0.00000015}
+    tokens[a].quad = {0.5, 1.5, 0.005, 0.00001, 0}
+    tokens[b].quad = {5,4,0.0015,0.000001,0}
+    tokens[c].quad = {0.1,0.3,0.002,0.0000008,0.00000012}
     tokens[a].variance = {  0.2,  0.2,  0.2 }
     tokens[b].variance = {  0.1,  0.1,  0.1 }
     tokens[c].variance = {  0.3,  0.3,  0.3 }
