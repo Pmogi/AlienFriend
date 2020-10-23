@@ -19,7 +19,7 @@ function Game.new()
 end
 
 function Game.draw()
-    love.graphics.draw(Assets.getAsset("gridBG"), 0, 20, 0)
+    love.graphics.draw(Assets.getAsset("gridBG"), 0,0,0,720/800,720/600)
     tokenMaker:draw()
 
     --local happy, hungry, growth = Slime:returnStats()
